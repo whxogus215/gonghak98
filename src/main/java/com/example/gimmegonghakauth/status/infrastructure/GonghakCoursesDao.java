@@ -14,12 +14,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface GonghakCoursesDao extends JpaRepository<GonghakCoursesDomain,Long> {
 
-    @Query("select new com.example.gimmegonghakauth.dto.GonghakCoursesByMajorDto(GCD.coursesDomain.courseId, GCD.coursesDomain.name, GCD.year, GCD.courseCategory, GCD.passCategory, GCD.designCredit, GCD.coursesDomain.credit) from GonghakCoursesDomain GCD "
+    @Query("select new com.example.gimmegonghakauth.status.service.dto.GonghakCoursesByMajorDto(GCD.coursesDomain.courseId, GCD.coursesDomain.name, GCD.year, GCD.courseCategory, GCD.passCategory, GCD.designCredit, GCD.coursesDomain.credit) from GonghakCoursesDomain GCD "
         + "join CompletedCoursesDomain CCD on GCD.coursesDomain = CCD.coursesDomain "
         + "where CCD.userDomain.studentId =:studentId and GCD.majorsDomain.id = :majorsId and GCD.year = :year")
     List<GonghakCoursesByMajorDto> findUserCompletedCourses(@Param("studentId") Long studentId, @Param("majorsId") Long majorId, @Param("year") Long year);
 
-    @Query("select new com.example.gimmegonghakauth.dto.IncompletedCoursesDto(GCD.coursesDomain.name, GCD.courseCategory, GCD.coursesDomain.credit, GCD.designCredit) from GonghakCoursesDomain GCD  "
+    @Query("select new com.example.gimmegonghakauth.status.service.dto.IncompletedCoursesDto(GCD.coursesDomain.name, GCD.courseCategory, GCD.coursesDomain.credit, GCD.designCredit) from GonghakCoursesDomain GCD  "
         + "left join CompletedCoursesDomain CCD on CCD.coursesDomain = GCD.coursesDomain "
         + "where GCD.majorsDomain = :majorsDomain and GCD.year = :year and GCD.courseCategory = :courseCategory and CCD.id is null and :studentId is not null")
     List<IncompletedCoursesDto> findUserIncompletedCourses(@Param("courseCategory") CourseCategoryConst courseCategory, @Param("studentId") Long studentId, @Param("majorsDomain") MajorsDomain majorsDomain, @Param("year") Long year);
