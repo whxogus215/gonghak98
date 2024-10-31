@@ -1,4 +1,4 @@
-package com.example.gimmegonghakauth.service;
+package com.example.gimmegonghakauth.auth.service;
 
 import com.example.gimmegonghakauth.user.infrastructure.UserRepository;
 import com.example.gimmegonghakauth.user.domain.UserDomain;
