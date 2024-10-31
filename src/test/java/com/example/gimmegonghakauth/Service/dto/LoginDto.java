@@ -1,4 +1,4 @@
-package com.example.gimmegonghakauth.dto;
+package com.example.gimmegonghakauth.Service.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
