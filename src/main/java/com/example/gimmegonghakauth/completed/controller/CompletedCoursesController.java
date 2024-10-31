@@ -1,7 +1,7 @@
 package com.example.gimmegonghakauth.completed.controller;
 
 import com.example.gimmegonghakauth.completed.domain.CompletedCoursesDomain;
-import com.example.gimmegonghakauth.exception.FileException;
+import com.example.gimmegonghakauth.completed.service.exception.FileException;
 import com.example.gimmegonghakauth.completed.service.CompletedCoursesService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -7,7 +7,7 @@ import com.example.gimmegonghakauth.common.domain.MajorsDomain;
 import com.example.gimmegonghakauth.user.domain.UserDomain;
 import com.example.gimmegonghakauth.user.service.dto.ChangePasswordDto;
 import com.example.gimmegonghakauth.user.service.dto.UserJoinDto;
-import com.example.gimmegonghakauth.exception.UserNotFoundException;
+import com.example.gimmegonghakauth.user.service.exception.UserNotFoundException;
 import com.example.gimmegonghakauth.user.service.port.UserEncoder;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

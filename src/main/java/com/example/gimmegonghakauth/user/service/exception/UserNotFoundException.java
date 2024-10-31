@@ -1,4 +1,4 @@
-package com.example.gimmegonghakauth.exception;
+package com.example.gimmegonghakauth.user.service.exception;
 
 public class UserNotFoundException extends RuntimeException {
 

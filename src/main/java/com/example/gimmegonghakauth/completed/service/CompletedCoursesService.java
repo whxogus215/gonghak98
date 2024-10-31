@@ -6,7 +6,7 @@ import com.example.gimmegonghakauth.user.infrastructure.UserRepository;
 import com.example.gimmegonghakauth.completed.domain.CompletedCoursesDomain;
 import com.example.gimmegonghakauth.common.domain.CoursesDomain;
 import com.example.gimmegonghakauth.user.domain.UserDomain;
-import com.example.gimmegonghakauth.exception.FileException;
+import com.example.gimmegonghakauth.completed.service.exception.FileException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
