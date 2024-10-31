@@ -1,13 +1,13 @@
-package com.example.gimmegonghakauth.controller;
+package com.example.gimmegonghakauth.status.controller;
 
 import com.example.gimmegonghakauth.constant.AbeekTypeConst;
 import com.example.gimmegonghakauth.user.infrastructure.UserRepository;
 import com.example.gimmegonghakauth.user.domain.UserDomain;
-import com.example.gimmegonghakauth.dto.GonghakResultDto.ResultPointDto;
-import com.example.gimmegonghakauth.dto.IncompletedCoursesDto;
-import com.example.gimmegonghakauth.service.GonghakCalculateService;
-import com.example.gimmegonghakauth.service.recommend.GonghakRecommendService;
-import com.example.gimmegonghakauth.service.recommend.RecommendServiceSelectManager;
+import com.example.gimmegonghakauth.status.service.dto.GonghakResultDto.ResultPointDto;
+import com.example.gimmegonghakauth.status.service.dto.IncompletedCoursesDto;
+import com.example.gimmegonghakauth.status.service.GonghakCalculateService;
+import com.example.gimmegonghakauth.status.service.recommend.GonghakRecommendService;
+import com.example.gimmegonghakauth.status.service.recommend.RecommendServiceSelectManager;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;

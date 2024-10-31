@@ -1,11 +1,11 @@
-package com.example.gimmegonghakauth.dao;
+package com.example.gimmegonghakauth.status.infrastructure;
 
 import com.example.gimmegonghakauth.constant.CourseCategoryConst;
-import com.example.gimmegonghakauth.domain.AbeekDomain;
+import com.example.gimmegonghakauth.status.domain.AbeekDomain;
 import com.example.gimmegonghakauth.domain.MajorsDomain;
-import com.example.gimmegonghakauth.dto.GonghakCoursesByMajorDto;
-import com.example.gimmegonghakauth.dto.GonghakStandardDto;
-import com.example.gimmegonghakauth.dto.IncompletedCoursesDto;
+import com.example.gimmegonghakauth.status.service.dto.GonghakCoursesByMajorDto;
+import com.example.gimmegonghakauth.status.service.dto.GonghakStandardDto;
+import com.example.gimmegonghakauth.status.service.dto.IncompletedCoursesDto;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;

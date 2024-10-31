@@ -1,6 +1,8 @@
-package com.example.gimmegonghakauth.domain;
+package com.example.gimmegonghakauth.status.domain;
 
-import com.example.gimmegonghakauth.constant.AbeekTypeConst;
+import com.example.gimmegonghakauth.constant.CourseCategoryConst;
+import com.example.gimmegonghakauth.domain.CoursesDomain;
+import com.example.gimmegonghakauth.domain.MajorsDomain;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -10,7 +12,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -22,36 +23,40 @@ import org.hibernate.validator.constraints.Range;
 
 @Entity
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "abeek")
-public class AbeekDomain {
-
+@Builder
+@Table(name = "gonghak_course")
+public class GonghakCoursesDomain {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "abeek_id")
+    @Column(name = "gonghak_course_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "major_id")
     private MajorsDomain majorsDomain;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id")
+    private CoursesDomain coursesDomain;
+
     @NotNull
-    @Range(min = 14,max = 24)
+    @Range(min = 15, max = 24)
     @Column(name = "year")
     private int year;
 
     @NotNull
-    @Enumerated(value = EnumType.ORDINAL)
-    @Column(name = "abeek_type")
-    private AbeekTypeConst abeekType;
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "course_category_const")
+    private CourseCategoryConst courseCategory;
 
     @NotNull
-    @Column(name = "min_credit")
-    private int minCredit;
+    @Column(name = "pass_category")
+    private String passCategory;
 
-    @Lob
-    @Column(name = "note")
-    private String note;
+    @NotNull
+    @Range(min = 0,max = 6)
+    @Column(name = "design_credit")
+    private double designCredit;
 }

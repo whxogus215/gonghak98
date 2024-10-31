@@ -1,4 +1,4 @@
-package com.example.gimmegonghakauth.service.recommend;
+package com.example.gimmegonghakauth.status.domain;
 
 public enum MajorName {
     ELEC_INFO("전자정보통신공학과"),

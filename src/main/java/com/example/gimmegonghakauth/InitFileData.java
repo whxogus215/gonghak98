@@ -2,10 +2,10 @@ package com.example.gimmegonghakauth;
 
 import com.example.gimmegonghakauth.constant.CourseCategoryConst;
 import com.example.gimmegonghakauth.dao.CoursesDao;
-import com.example.gimmegonghakauth.dao.GonghakCoursesDao;
 import com.example.gimmegonghakauth.dao.MajorsDao;
 import com.example.gimmegonghakauth.domain.CoursesDomain;
-import com.example.gimmegonghakauth.domain.GonghakCoursesDomain;
+import com.example.gimmegonghakauth.status.domain.GonghakCoursesDomain;
+import com.example.gimmegonghakauth.status.infrastructure.GonghakCoursesDao;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -58,10 +58,10 @@ public class InitFileData {
 
     private CoursesDomain mapToCoursesDomain(String[] data) {
         return CoursesDomain.builder()
-            .courseId(Long.valueOf(data[0]))
-            .name(data[2])
-            .credit(Integer.parseInt(data[3]))
-            .build();
+                .courseId(Long.valueOf(data[0]))
+                .name(data[2])
+                .credit(Integer.parseInt(data[3]))
+                .build();
     }
 
     private void inputGonghakCoursesCsv(String csvFilePath) {
@@ -113,13 +113,13 @@ public class InitFileData {
         }
 
         GonghakCoursesDomain gonghakCourse = GonghakCoursesDomain.builder()
-            .year(Integer.parseInt(data[0]))
-            .majorsDomain(majorsDao.findByMajor(data[2]))
-            .coursesDomain(courseDomain)
-            .courseCategory(CourseCategoryConst.valueOf(courseCategory))
-            .passCategory(data[5].substring(0, 2))
-            .designCredit(Double.parseDouble(data[8]))
-            .build();
+                .year(Integer.parseInt(data[0]))
+                .majorsDomain(majorsDao.findByMajor(data[2]))
+                .coursesDomain(courseDomain)
+                .courseCategory(CourseCategoryConst.valueOf(courseCategory))
+                .passCategory(data[5].substring(0, 2))
+                .designCredit(Double.parseDouble(data[8]))
+                .build();
 
         return Optional.of(gonghakCourse);
     }
@@ -127,13 +127,13 @@ public class InitFileData {
     // 실제 DB csv file 입력용
     private Optional<GonghakCoursesDomain> mapToGonghakCourses(String[] data) {
         GonghakCoursesDomain gonghakCourse = GonghakCoursesDomain.builder()
-            .year(Integer.parseInt(data[1]))
-            .majorsDomain(majorsDao.findById(Long.parseLong(data[4])).get())
-            .coursesDomain(coursesDao.findByCourseId(Long.parseLong(data[2])))
-            .courseCategory(CourseCategoryConst.valueOf(data[5]))
-            .passCategory(data[6])
-            .designCredit(Double.parseDouble(data[0]))
-            .build();
+                .year(Integer.parseInt(data[1]))
+                .majorsDomain(majorsDao.findById(Long.parseLong(data[4])).get())
+                .coursesDomain(coursesDao.findByCourseId(Long.parseLong(data[2])))
+                .courseCategory(CourseCategoryConst.valueOf(data[5]))
+                .passCategory(data[6])
+                .designCredit(Double.parseDouble(data[0]))
+                .build();
 
         return Optional.of(gonghakCourse);
     }
