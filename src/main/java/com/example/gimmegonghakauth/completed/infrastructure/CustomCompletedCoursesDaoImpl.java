@@ -1,6 +1,6 @@
-package com.example.gimmegonghakauth.dao;
+package com.example.gimmegonghakauth.completed.infrastructure;
 
-import com.example.gimmegonghakauth.domain.CompletedCoursesDomain;
+import com.example.gimmegonghakauth.completed.domain.CompletedCoursesDomain;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;

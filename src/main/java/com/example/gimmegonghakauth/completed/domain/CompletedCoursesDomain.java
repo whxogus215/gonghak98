@@ -1,5 +1,6 @@
-package com.example.gimmegonghakauth.domain;
+package com.example.gimmegonghakauth.completed.domain;
 
+import com.example.gimmegonghakauth.domain.CoursesDomain;
 import com.example.gimmegonghakauth.user.domain.UserDomain;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
