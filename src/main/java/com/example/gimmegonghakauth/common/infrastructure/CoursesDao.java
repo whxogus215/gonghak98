@@ -1,6 +1,6 @@
-package com.example.gimmegonghakauth.dao;
+package com.example.gimmegonghakauth.common.infrastructure;
 
-import com.example.gimmegonghakauth.domain.CoursesDomain;
+import com.example.gimmegonghakauth.common.domain.CoursesDomain;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

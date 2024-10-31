@@ -3,8 +3,9 @@ package com.example.gimmegonghakauth.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.example.gimmegonghakauth.constant.AbeekTypeConst;
-import com.example.gimmegonghakauth.dao.MajorsDao;
+import com.example.gimmegonghakauth.common.domain.MajorsDomain;
+import com.example.gimmegonghakauth.common.constant.AbeekTypeConst;
+import com.example.gimmegonghakauth.common.infrastructure.MajorsDao;
 import com.example.gimmegonghakauth.domain.DomainTest.DomainTestConfig;
 import com.example.gimmegonghakauth.status.domain.AbeekDomain;
 import com.example.gimmegonghakauth.status.infrastructure.AbeekDao;

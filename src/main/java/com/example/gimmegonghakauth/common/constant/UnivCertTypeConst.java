@@ -1,4 +1,4 @@
-package com.example.gimmegonghakauth.constant;
+package com.example.gimmegonghakauth.common.constant;
 
 public enum UnivCertTypeConst {
     SEND_MAIL("이메일 발송"),

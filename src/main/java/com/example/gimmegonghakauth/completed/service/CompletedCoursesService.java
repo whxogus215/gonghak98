@@ -1,10 +1,10 @@
 package com.example.gimmegonghakauth.completed.service;
 
 import com.example.gimmegonghakauth.completed.infrastructure.CompletedCoursesDao;
-import com.example.gimmegonghakauth.dao.CoursesDao;
+import com.example.gimmegonghakauth.common.infrastructure.CoursesDao;
 import com.example.gimmegonghakauth.user.infrastructure.UserRepository;
 import com.example.gimmegonghakauth.completed.domain.CompletedCoursesDomain;
-import com.example.gimmegonghakauth.domain.CoursesDomain;
+import com.example.gimmegonghakauth.common.domain.CoursesDomain;
 import com.example.gimmegonghakauth.user.domain.UserDomain;
 import com.example.gimmegonghakauth.exception.FileException;
 import java.io.IOException;

@@ -2,11 +2,13 @@ package com.example.gimmegonghakauth.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.example.gimmegonghakauth.common.infrastructure.CoursesDao;
+import com.example.gimmegonghakauth.common.infrastructure.MajorsDao;
 import com.example.gimmegonghakauth.completed.domain.CompletedCoursesDomain;
 import com.example.gimmegonghakauth.completed.infrastructure.CompletedCoursesDao;
-import com.example.gimmegonghakauth.constant.AbeekTypeConst;
-import com.example.gimmegonghakauth.constant.CourseCategoryConst;
-import com.example.gimmegonghakauth.domain.MajorsDomain;
+import com.example.gimmegonghakauth.common.constant.AbeekTypeConst;
+import com.example.gimmegonghakauth.common.constant.CourseCategoryConst;
+import com.example.gimmegonghakauth.common.domain.MajorsDomain;
 import com.example.gimmegonghakauth.status.domain.MajorName;
 import com.example.gimmegonghakauth.status.infrastructure.GonghakRepository;
 import com.example.gimmegonghakauth.status.service.dto.GonghakCoursesByMajorDto;

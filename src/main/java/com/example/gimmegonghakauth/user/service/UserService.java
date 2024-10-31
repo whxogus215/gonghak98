@@ -3,7 +3,7 @@ package com.example.gimmegonghakauth.user.service;
 import com.example.gimmegonghakauth.completed.infrastructure.CompletedCoursesDao;
 import com.example.gimmegonghakauth.user.infrastructure.UserRepository;
 import com.example.gimmegonghakauth.completed.domain.CompletedCoursesDomain;
-import com.example.gimmegonghakauth.domain.MajorsDomain;
+import com.example.gimmegonghakauth.common.domain.MajorsDomain;
 import com.example.gimmegonghakauth.user.domain.UserDomain;
 import com.example.gimmegonghakauth.user.service.dto.ChangePasswordDto;
 import com.example.gimmegonghakauth.user.service.dto.UserJoinDto;

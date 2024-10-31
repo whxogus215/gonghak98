@@ -1,8 +1,8 @@
-package com.example.gimmegonghakauth;
+package com.example.gimmegonghakauth.common.service;
 
-import com.example.gimmegonghakauth.constant.AbeekTypeConst;
-import com.example.gimmegonghakauth.dao.MajorsDao;
-import com.example.gimmegonghakauth.domain.MajorsDomain;
+import com.example.gimmegonghakauth.common.constant.AbeekTypeConst;
+import com.example.gimmegonghakauth.common.infrastructure.MajorsDao;
+import com.example.gimmegonghakauth.common.domain.MajorsDomain;
 import com.example.gimmegonghakauth.status.domain.AbeekDomain;
 import com.example.gimmegonghakauth.status.domain.AbeekDomain.AbeekDomainBuilder;
 import com.example.gimmegonghakauth.status.domain.MajorName;

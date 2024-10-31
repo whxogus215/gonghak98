@@ -1,8 +1,8 @@
 package com.example.gimmegonghakauth.status.infrastructure;
 
-import com.example.gimmegonghakauth.constant.CourseCategoryConst;
+import com.example.gimmegonghakauth.common.constant.CourseCategoryConst;
 import com.example.gimmegonghakauth.status.domain.AbeekDomain;
-import com.example.gimmegonghakauth.domain.MajorsDomain;
+import com.example.gimmegonghakauth.common.domain.MajorsDomain;
 import com.example.gimmegonghakauth.status.service.dto.GonghakCoursesByMajorDto;
 import com.example.gimmegonghakauth.status.service.dto.GonghakStandardDto;
 import com.example.gimmegonghakauth.status.service.dto.IncompletedCoursesDto;

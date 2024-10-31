@@ -1,9 +1,9 @@
-package com.example.gimmegonghakauth;
+package com.example.gimmegonghakauth.common.service;
 
-import com.example.gimmegonghakauth.constant.CourseCategoryConst;
-import com.example.gimmegonghakauth.dao.CoursesDao;
-import com.example.gimmegonghakauth.dao.MajorsDao;
-import com.example.gimmegonghakauth.domain.CoursesDomain;
+import com.example.gimmegonghakauth.common.constant.CourseCategoryConst;
+import com.example.gimmegonghakauth.common.infrastructure.CoursesDao;
+import com.example.gimmegonghakauth.common.infrastructure.MajorsDao;
+import com.example.gimmegonghakauth.common.domain.CoursesDomain;
 import com.example.gimmegonghakauth.status.domain.GonghakCoursesDomain;
 import com.example.gimmegonghakauth.status.infrastructure.GonghakCoursesDao;
 import java.io.BufferedReader;

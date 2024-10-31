@@ -1,8 +1,8 @@
 package com.example.gimmegonghakauth.status.service.recommend;
 
 
-import com.example.gimmegonghakauth.constant.AbeekTypeConst;
-import com.example.gimmegonghakauth.constant.CourseCategoryConst;
+import com.example.gimmegonghakauth.common.constant.AbeekTypeConst;
+import com.example.gimmegonghakauth.common.constant.CourseCategoryConst;
 import com.example.gimmegonghakauth.status.infrastructure.GonghakRepository;
 import com.example.gimmegonghakauth.status.service.dto.GonghakRecommendCoursesDto;
 import com.example.gimmegonghakauth.status.service.dto.GonghakStandardDto;

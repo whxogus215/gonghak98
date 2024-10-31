@@ -1,6 +1,6 @@
 package com.example.gimmegonghakauth.status.service.dto;
 
-import com.example.gimmegonghakauth.constant.CourseCategoryConst;
+import com.example.gimmegonghakauth.common.constant.CourseCategoryConst;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

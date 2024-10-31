@@ -1,7 +1,7 @@
 package com.example.gimmegonghakauth.user.service;
 
-import com.example.gimmegonghakauth.constant.UnivCertTypeConst;
-import com.example.gimmegonghakauth.constant.UnivcertErrorMessageConst;
+import com.example.gimmegonghakauth.common.constant.UnivCertTypeConst;
+import com.example.gimmegonghakauth.common.constant.UnivcertErrorMessageConst;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.univcert.api.UnivCert;
 import org.springframework.beans.factory.annotation.Value;

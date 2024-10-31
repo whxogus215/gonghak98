@@ -2,7 +2,7 @@ package com.example.gimmegonghakauth.Service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.example.gimmegonghakauth.constant.AbeekTypeConst;
+import com.example.gimmegonghakauth.common.constant.AbeekTypeConst;
 import com.example.gimmegonghakauth.dto.LoginDto;
 import com.example.gimmegonghakauth.status.service.dto.IncompletedCoursesDto;
 import com.example.gimmegonghakauth.status.service.recommend.ComputerMajorGonghakRecommendService;

@@ -3,8 +3,8 @@ package com.example.gimmegonghakauth.Service;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.example.gimmegonghakauth.Service.GonghakCalculateServiceTest.CalculateTestConfig;
-import com.example.gimmegonghakauth.constant.AbeekTypeConst;
-import com.example.gimmegonghakauth.domain.MajorsDomain;
+import com.example.gimmegonghakauth.common.constant.AbeekTypeConst;
+import com.example.gimmegonghakauth.common.domain.MajorsDomain;
 import com.example.gimmegonghakauth.status.infrastructure.AbeekDao;
 import com.example.gimmegonghakauth.status.infrastructure.GonghakCoursesDao;
 import com.example.gimmegonghakauth.status.infrastructure.GonghakDao;

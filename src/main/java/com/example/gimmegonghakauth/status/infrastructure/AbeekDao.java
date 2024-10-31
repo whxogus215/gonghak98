@@ -1,7 +1,7 @@
 package com.example.gimmegonghakauth.status.infrastructure;
 
 import com.example.gimmegonghakauth.status.domain.AbeekDomain;
-import com.example.gimmegonghakauth.domain.MajorsDomain;
+import com.example.gimmegonghakauth.common.domain.MajorsDomain;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

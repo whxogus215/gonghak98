@@ -1,7 +1,9 @@
-package com.example.gimmegonghakauth.domain;
+package com.example.gimmegonghakauth.common.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -12,20 +14,18 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Table(name = "course")
-public class CoursesDomain {
+@Table(name = "major")
+public class MajorsDomain {
 
     @Id
-    @Column(name = "course_id")
-    private Long courseId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "major_id")
+    private Long id;
 
     @NotNull
-    @Column(name = "name")
-    private String name;
-    @NotNull
-    @Column(name = "credit")
-    private int credit;
+    @Column(name = "major")
+    private String major;
 }

@@ -1,6 +1,6 @@
 package com.example.gimmegonghakauth.user.controller;
 
-import com.example.gimmegonghakauth.dao.MajorsDao;
+import com.example.gimmegonghakauth.common.infrastructure.MajorsDao;
 import com.example.gimmegonghakauth.user.domain.UserDomain;
 import com.example.gimmegonghakauth.user.service.dto.ChangePasswordDto;
 import com.example.gimmegonghakauth.user.service.dto.UserJoinDto;

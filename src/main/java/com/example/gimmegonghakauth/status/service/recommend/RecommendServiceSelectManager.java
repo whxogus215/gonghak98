@@ -2,7 +2,7 @@ package com.example.gimmegonghakauth.status.service.recommend;
 
 import static com.example.gimmegonghakauth.status.domain.MajorName.ELEC_INFO;
 
-import com.example.gimmegonghakauth.domain.MajorsDomain;
+import com.example.gimmegonghakauth.common.domain.MajorsDomain;
 import com.example.gimmegonghakauth.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;

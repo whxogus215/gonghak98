@@ -1,4 +1,4 @@
-package com.example.gimmegonghakauth.constant;
+package com.example.gimmegonghakauth.common.constant;
 
 public enum UnivcertErrorMessageConst {
 

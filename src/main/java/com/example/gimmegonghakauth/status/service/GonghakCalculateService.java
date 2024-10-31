@@ -1,6 +1,6 @@
 package com.example.gimmegonghakauth.status.service;
 
-import com.example.gimmegonghakauth.constant.AbeekTypeConst;
+import com.example.gimmegonghakauth.common.constant.AbeekTypeConst;
 import com.example.gimmegonghakauth.status.infrastructure.GonghakRepository;
 import com.example.gimmegonghakauth.status.service.dto.GonghakCoursesByMajorDto;
 import com.example.gimmegonghakauth.status.service.dto.GonghakResultDto;

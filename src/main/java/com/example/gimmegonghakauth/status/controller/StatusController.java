@@ -1,6 +1,6 @@
 package com.example.gimmegonghakauth.status.controller;
 
-import com.example.gimmegonghakauth.constant.AbeekTypeConst;
+import com.example.gimmegonghakauth.common.constant.AbeekTypeConst;
 import com.example.gimmegonghakauth.user.infrastructure.UserRepository;
 import com.example.gimmegonghakauth.user.domain.UserDomain;
 import com.example.gimmegonghakauth.status.service.dto.GonghakResultDto.ResultPointDto;
