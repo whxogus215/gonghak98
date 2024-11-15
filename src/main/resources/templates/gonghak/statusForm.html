@@ -25,27 +25,27 @@
         <div class="table-container m-3" style="max-height: 500px; overflow-y: auto">
           <table class="table" style="font-size:20px">
             <thead>
-            <tr class="table-dark">
-              <th>Abeek 타입</th>
-              <th>얻은 학점</th>
-              <th>기준 학점</th>
-              <th>진행도</th>
-              <th></th>
-            </tr>
+              <tr class="table-dark">
+                <th>Abeek 타입</th>
+                <th>얻은 학점</th>
+                <th>기준 학점</th>
+                <th>진행도</th>
+                <th></th>
+              </tr>
             </thead>
             <tbody>
-            <tr th:each="resultRatio : ${userResultRatio}">
-              <td th:text="${resultRatio.getKey().getTypeMessage()}"></td>
-              <td th:text="${resultRatio.value.getUserPoint()}"></td>
-              <td th:text="${resultRatio.value.getStandardPoint()}"></td>
-              <td>
-                <div class="progress-bar">
-                  <div class="progress"
-                       th:style="'width: ' + ${#numbers.formatPercent((resultRatio.value.getUserPoint()/resultRatio.value.getStandardPoint()),1,1)}"></div>
-                </div>
-              </td>
-              <td th:text="${#numbers.formatPercent((resultRatio.value.getUserPoint()/resultRatio.value.getStandardPoint()),1,1) }"></td>
-            </tr>
+              <tr th:each="resultRatio : ${userResultRatio}">
+                <td th:text="${resultRatio.getKey().getTypeMessage()}"></td>
+                <td th:text="${resultRatio.value.getUserPoint()}"></td>
+                <td th:text="${resultRatio.value.getStandardPoint()}"></td>
+                <td>
+                  <div class="progress-bar">
+                    <div class="progress"
+                         th:style="'width: ' + ${#numbers.formatPercent((resultRatio.value.getUserPoint()/resultRatio.value.getStandardPoint()),1,1)}"></div>
+                  </div>
+                </td>
+                <td th:text="${#numbers.formatPercent((resultRatio.value.getUserPoint()/resultRatio.value.getStandardPoint()),1,1) }"></td>
+              </tr>
             </tbody>
           </table>
         </div>
