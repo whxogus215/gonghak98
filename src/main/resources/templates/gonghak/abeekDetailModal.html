@@ -22,14 +22,16 @@
                         <th>이수학기</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr th:each="abeekDetail : ${abeekDetailsDto}">
-                        <td th:text="${abeekDetail.value.getCourseId()}"></td>
-                        <td th:text="${abeekDetail.value.getCourseName()}"></td>
-                        <td th:text="${abeekDetail.value.getCredit()}"></td>
-                        <td th:text="${abeekDetail.value.getDesignCredit()}"></td>
-                        <td th:text="${abeekDetail.value.getYear()}"></td>
-                        <td th:text="${abeekDetail.value.getSemester()}"></td>
+                <tbody th:each="abeekDetail : ${abeekDetailsDto}"
+                       th:attr="id=${abeekDetail.key.typeMessage}"
+                       style="display: none">
+                    <tr th:each="dto : ${abeekDetailsDto.value}">
+                        <td th:text="${dto.courseId}"></td>
+                        <td th:text="${dto.courseName}"></td>
+                        <td th:text="${dto.credit}"></td>
+                        <td th:text="${dto.designCredit}"></td>
+                        <td th:text="${dto.year}"></td>
+                        <td th:text="${dto.semester}"></td>
                     </tr>
                 </tbody>
             </table>
