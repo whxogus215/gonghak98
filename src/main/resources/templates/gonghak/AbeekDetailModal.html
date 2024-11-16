@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
 </head>
 <div th:fragment="modal">
-    <div id="modal-background" style="display: block"></div>
-    <div id="modal-container" style="display: block" class="table-container m-3">
+    <div id="modal-background" style="display: none"></div>
+    <div id="modal-container" style="display: none" class="table-container m-3">
         <div class="modal-header">
             <h2>상세 정보</h2>
-            <button id="close-modal" style="float: right;">닫기</button>
+            <button id="close-modal" style="float: right;" onclick="closeModal()">닫기</button>
         </div>
         <div class="modal-body">
             <table class="table" style="font-size:20px">
@@ -35,4 +35,5 @@
             </table>
         </div>
     </div>
+    <script src="/static/js/modal.js"></script>
 </div>
