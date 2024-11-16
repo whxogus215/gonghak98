@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<div th:fragment="modal">
+    <div id="modal-background" style="display: block"></div>
+    <div id="modal-container" style="display: block" class="table-container m-3">
+        <div class="modal-header">
+            <h2>상세 정보</h2>
+            <button id="close-modal" style="float: right;">닫기</button>
+        </div>
+        <div class="modal-body">
+            <table class="table" style="font-size:20px">
+                <thead>
+                    <tr class="table-dark">
+                        <th>학수번호</th>
+                        <th>과목명</th>
+                        <th>학점</th>
+                        <th>설계 학점</th>
+                        <th>이수년도</th>
+                        <th>이수학기</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="abeekDetail : ${abeekDetailsDto}">
+                        <td th:text="${abeekDetail.value.getCourseId()}"></td>
+                        <td th:text="${abeekDetail.value.getCourseName()}"></td>
+                        <td th:text="${abeekDetail.value.getCredit()}"></td>
+                        <td th:text="${abeekDetail.value.getDesignCredit()}"></td>
+                        <td th:text="${abeekDetail.value.getYear()}"></td>
+                        <td th:text="${abeekDetail.value.getSemester()}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

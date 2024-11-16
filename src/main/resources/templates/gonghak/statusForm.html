@@ -17,6 +17,9 @@
         </a>
       </div>
     </div>
+
+    <div th:insert="~{gonghak/AbeekDetailModal :: modal}"></div>
+
     <div class="window-body" style="text-align: center">
       <div style="margin-top: 30px; margin-bottom: 40px">
         <div class="py-5 text-center">
@@ -35,7 +38,12 @@
             </thead>
             <tbody>
               <tr th:each="resultRatio : ${userResultRatio}">
-                <td th:text="${resultRatio.getKey().getTypeMessage()}"></td>
+                <td>
+                  <span th:text="${resultRatio.getKey().getTypeMessage()}"></span>
+                    <span style="cursor: pointer; color: blue; text-decoration: underline; font-size: 12px; padding: 5px 10px" onclick="openModal()">
+                    상세보기
+                  </span>
+                </td>
                 <td th:text="${resultRatio.value.getUserPoint()}"></td>
                 <td th:text="${resultRatio.value.getStandardPoint()}"></td>
                 <td>
