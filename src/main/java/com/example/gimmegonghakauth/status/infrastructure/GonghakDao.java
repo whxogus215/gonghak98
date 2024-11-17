@@ -4,7 +4,7 @@ import com.example.gimmegonghakauth.common.constant.AbeekTypeConst;
 import com.example.gimmegonghakauth.common.constant.CourseCategoryConst;
 import com.example.gimmegonghakauth.status.domain.AbeekDomain;
 import com.example.gimmegonghakauth.common.domain.MajorsDomain;
-import com.example.gimmegonghakauth.status.service.dto.GonghakCoursesByMajorDto;
+import com.example.gimmegonghakauth.status.service.dto.CourseDetailsDto;
 import com.example.gimmegonghakauth.status.service.dto.GonghakStandardDto;
 import com.example.gimmegonghakauth.status.service.dto.IncompletedCoursesDto;
 import java.util.List;
@@ -41,7 +41,7 @@ public class GonghakDao implements GonghakRepository{
 
     // gonghakCourse 중 이수한 과목을 불러온다.
     @Override
-    public List<GonghakCoursesByMajorDto> findUserCompletedCourses(
+    public List<CourseDetailsDto> findUserCompletedCourses(
         Long studentId, MajorsDomain majorsDomain) {
         return gonghakCoursesDao.findUserCompletedCourses(studentId,majorsDomain.getId(), studentId/DIVIDER);
     }
