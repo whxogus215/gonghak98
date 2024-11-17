@@ -1,5 +1,4 @@
 function openModal(typeName) {
-
     const allTbody = document.querySelectorAll(".modal-body tbody");
     allTbody.forEach(tbody => {
         tbody.style.display = "none";
