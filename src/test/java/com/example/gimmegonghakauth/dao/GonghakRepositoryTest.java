@@ -11,7 +11,7 @@ import com.example.gimmegonghakauth.common.constant.CourseCategoryConst;
 import com.example.gimmegonghakauth.common.domain.MajorsDomain;
 import com.example.gimmegonghakauth.status.domain.MajorName;
 import com.example.gimmegonghakauth.status.infrastructure.GonghakRepository;
-import com.example.gimmegonghakauth.status.service.dto.GonghakCoursesByMajorDto;
+import com.example.gimmegonghakauth.status.service.dto.CourseDetailsDto;
 import com.example.gimmegonghakauth.status.service.dto.GonghakStandardDto;
 import com.example.gimmegonghakauth.status.service.dto.IncompletedCoursesDto;
 import com.example.gimmegonghakauth.user.domain.UserDomain;
@@ -109,7 +109,7 @@ class GonghakRepositoryTest {
                 }
         );
 
-        List<GonghakCoursesByMajorDto> withCompletedCourses = gonghakRepository.findUserCompletedCourses(
+        List<CourseDetailsDto> withCompletedCourses = gonghakRepository.findUserCompletedCourses(
                 COM_TEST_STUDENT_ID, COM_TEST_MAJORDOMAIN
         );
 
@@ -138,11 +138,11 @@ class GonghakRepositoryTest {
     @Test
     @DisplayName("findUserCoursesByMajorByGonghakCoursesWithCompletedCourses 테스트 ")
     void findUserCoursesByMajorByGonghakCoursesWithCompletedCoursesTest() {
-        List<GonghakCoursesByMajorDto> userDataForCalculate = gonghakRepository.findUserCompletedCourses(
+        List<CourseDetailsDto> userDataForCalculate = gonghakRepository.findUserCompletedCourses(
                 COM_TEST_STUDENT_ID, COM_TEST_MAJORDOMAIN);
 
         log.info("userDataForCalculate size = {}", userDataForCalculate.size());
-        for (GonghakCoursesByMajorDto course : userDataForCalculate) {
+        for (CourseDetailsDto course : userDataForCalculate) {
             log.info(
                     "Course ID: {}, Course Name: {}, Year: {}, Course Category: {}, Pass Category: {}, Design Credit: {}, Credit: {}",
                     course.getCourseId(),
