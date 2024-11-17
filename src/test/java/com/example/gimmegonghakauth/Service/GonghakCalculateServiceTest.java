@@ -75,6 +75,20 @@ class GonghakCalculateServiceTest {
         );
     }
 
+    @Test
+    @DisplayName("AbeekTypeConst 별로 CourseDetailsDto가 올바르게 저장되는지 확인")
+    void checkCoursesStoredByAbeekTypeConst() {
+        Map<AbeekTypeConst, AbeekDetailsDto> userResult = gonghakCalculateService.getResult(TEST_USERDOMAIN).get().getUserResult();
+
+        userResult.forEach((abeekTypeConst, abeekDetailsDto) -> {
+            List<CourseDetailsDto> courses = abeekDetailsDto.getCoursesDetails();
+            assertThat(courses).isNotNull();
+            assertThat(courses).isInstanceOf(List.class);
+
+            log.info("AbeekTypeConst: {}, Courses: {}", abeekTypeConst, courses);
+        });
+    }
+
 
     private double getExpectedCredit(int credit, Map<AbeekTypeConst, Integer> standard,
         AbeekTypeConst abeekTypeConst) {
