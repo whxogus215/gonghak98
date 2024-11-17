@@ -40,9 +40,10 @@
               <tr th:each="resultRatio : ${userResultRatio}">
                 <td>
                   <span th:text="${resultRatio.getKey().getTypeMessage()}"></span>
-                    <span style="cursor: pointer; color: blue; text-decoration: underline; font-size: 12px; padding: 5px 10px" onclick="openModal()">
+                    <span style="cursor: pointer; color: blue; text-decoration: underline; font-size: 12px; padding: 5px 10px"
+                          th:onclick="openModal([[${resultRatio.getKey().getTypeMessage()}]])">
                     상세보기
-                  </span>
+                    </span>
                 </td>
                 <td th:text="${resultRatio.value.getUserPoint()}"></td>
                 <td th:text="${resultRatio.value.getStandardPoint()}"></td>
