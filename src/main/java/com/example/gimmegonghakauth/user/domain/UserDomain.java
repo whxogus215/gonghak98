@@ -1,7 +1,7 @@
 package com.example.gimmegonghakauth.user.domain;
 
 
-import com.example.gimmegonghakauth.domain.MajorsDomain;
+import com.example.gimmegonghakauth.common.domain.MajorsDomain;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

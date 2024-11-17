@@ -6,10 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import com.example.gimmegonghakauth.user.infrastructure.UserRepository;
-import com.example.gimmegonghakauth.domain.MajorsDomain;
+import com.example.gimmegonghakauth.common.domain.MajorsDomain;
 import com.example.gimmegonghakauth.user.domain.UserDomain;
 import com.example.gimmegonghakauth.user.domain.UserRole;
-import com.example.gimmegonghakauth.service.UserSecurityService;
+import com.example.gimmegonghakauth.auth.service.UserSecurityService;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

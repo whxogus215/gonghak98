@@ -1,13 +1,13 @@
 package com.example.gimmegonghakauth.Service;
 
-import com.example.gimmegonghakauth.dao.CompletedCoursesDao;
-import com.example.gimmegonghakauth.dao.CoursesDao;
-import com.example.gimmegonghakauth.dao.MajorsDao;
+import com.example.gimmegonghakauth.completed.infrastructure.CompletedCoursesDao;
+import com.example.gimmegonghakauth.common.infrastructure.CoursesDao;
+import com.example.gimmegonghakauth.common.infrastructure.MajorsDao;
 import com.example.gimmegonghakauth.user.infrastructure.UserRepository;
-import com.example.gimmegonghakauth.domain.CompletedCoursesDomain;
-import com.example.gimmegonghakauth.domain.CoursesDomain;
+import com.example.gimmegonghakauth.completed.domain.CompletedCoursesDomain;
+import com.example.gimmegonghakauth.common.domain.CoursesDomain;
 import com.example.gimmegonghakauth.user.domain.UserDomain;
-import com.example.gimmegonghakauth.service.CompletedCoursesService;
+import com.example.gimmegonghakauth.completed.service.CompletedCoursesService;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
