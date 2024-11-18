@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<div th:fragment="modal">
+    <div id="modal-background"></div>
+    <div id="modal-container" class="table-container m-3">
+        <div class="modal-header">
+            <h2>상세 정보</h2>
+            <button id="close-modal" style="float: right;" onclick="closeModal()">닫기</button>
+        </div>
+        <div class="modal-body" style="max-height: 500px; overflow-y: auto; padding: 0">
+            <table class="table" style="font-size:20px">
+                <thead>
+                    <tr class="table-dark">
+                        <th>학수번호</th>
+                        <th>과목명</th>
+                        <th>학점</th>
+                        <th>설계 학점</th>
+                        <th>이수년도</th>
+                        <th>이수학기</th>
+                    </tr>
+                </thead>
+                <tbody th:each="courseDetail : ${userCourseDetails}"
+                       th:attr="id=${courseDetail.key.typeMessage}"
+                       style="display: none">
+                    <tr th:each="dto : ${courseDetail.value}">
+                        <td th:text="${dto.courseId}"></td>
+                        <td th:text="${dto.courseName}"></td>
+                        <td th:text="${dto.credit}"></td>
+                        <td th:text="${dto.designCredit}"></td>
+                        <td th:text="${dto.year}"></td>
+                        <td th:text="${dto.semester}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="/static/js/modal.js"></script>
+</div>
