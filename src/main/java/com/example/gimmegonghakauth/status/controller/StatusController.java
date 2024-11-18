@@ -1,6 +1,7 @@
 package com.example.gimmegonghakauth.status.controller;
 
 import com.example.gimmegonghakauth.common.constant.AbeekTypeConst;
+import com.example.gimmegonghakauth.status.service.StatusService;
 import com.example.gimmegonghakauth.status.service.dto.AbeekDetailsDto;
 import com.example.gimmegonghakauth.status.service.dto.CourseDetailsDto;
 import com.example.gimmegonghakauth.status.service.dto.GonghakResultDto;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 public class StatusController {
 
+    private final StatusService statusService;
     private final GonghakCalculateService gonghakCalculateService;
     private final RecommendServiceSelectManager recommendServiceSelectManager;
     private final UserRepository userRepository;
