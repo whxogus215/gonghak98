@@ -3,7 +3,10 @@ function openModal(typeName) {
     allTbody.forEach(tbody => {
         tbody.style.display = "none";
     });
-    
+
+    const modalheader = document.querySelector(".modal-header h2");
+    modalheader.textContent = `${typeName}`
+
     const findTbody = document.getElementById(typeName);
     if (findTbody) {
         findTbody.style.display = "table-row-group";
