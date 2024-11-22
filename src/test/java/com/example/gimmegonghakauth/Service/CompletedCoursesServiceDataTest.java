@@ -75,6 +75,11 @@ public class CompletedCoursesServiceDataTest {
 
     @Test
     @DisplayName("업로드 데이터 저장 테스트")
+    /**
+     * CompletedCoursesService(C.C.S)에 대한 테스트인지가 의문이 들었음.
+     * - C.C.S와 의존관계인 Dao 객체의 메서드만 호출하지 정작 서비스 계층의 메서드는 호출하지 않고 있음.
+     * - 서비스 계층에 대한 테스트 보다는 Dao(리포지토리)에 대한 테스트에 가까워 보임.
+     */
     public void testUploadFile() {
         //기이수 과목 데이터1
         CompletedCoursesDomain data1 =
@@ -107,6 +112,7 @@ public class CompletedCoursesServiceDataTest {
 
     @Test
     @DisplayName("재업로드 테스트1(첫 업로드)")
+    // 서비스의 checkUser라는 메서드를 테스트하는 메서드인 것 같음.
     public void testUserUploadStatus1() {
         UserDomain user = userRepository.findByStudentId(19111111L).get();
 
@@ -122,6 +128,7 @@ public class CompletedCoursesServiceDataTest {
 
     @Test
     @DisplayName("재업로드 테스트2(재업로드,단일)")
+    // 서비스의 checkUser라는 메서드를 테스트하는 메서드인 것 같음. 222
     public void testUserUploadStatus2() {
         //기이수 과목 데이터 1
         CompletedCoursesDomain data1 =
@@ -176,6 +183,7 @@ public class CompletedCoursesServiceDataTest {
         UserDomain user = userRepository.findByStudentId(19111111L).get();
 
         //데이터 삭제
+        // checkUser를 호출했을 때 왜 데이터가 삭제되는거지?
         completedCoursesService.checkUser(user);
 
         //해당 유저 검색
