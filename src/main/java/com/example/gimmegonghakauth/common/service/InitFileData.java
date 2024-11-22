@@ -86,7 +86,8 @@ public class InitFileData {
             throw new IllegalArgumentException(e);
         }
     }
-
+    
+    //TODO 이 메서드는 어떠한 용도로 사용되는 것이며, 지워도 되는 것인지 확인하기
     // raw file 입력 용
     private Optional<GonghakCoursesDomain> mapToGonghakCoursesDomain(String[] data) {
 

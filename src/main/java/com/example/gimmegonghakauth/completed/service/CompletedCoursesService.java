@@ -27,6 +27,11 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class CompletedCoursesService {
 
+    /**
+     * 1. CompletedCoursesService가 기이수 과목을 처리하는 느낌보다는 엑셀 파일을 다루는 책임이 더 많게 느껴졌다.
+     * 2. 따라서 관련 메서드들이 기이수 과목을 어떻게 한다는건지 한 번에 이해하기가 어려웠다.
+     */
+
     private final CompletedCoursesDao completedCoursesDao;
     private final CoursesDao coursesDao; // CoursesDao 변수 선언
     private final UserRepository userRepository;
@@ -40,22 +45,39 @@ public class CompletedCoursesService {
 
     final int FIRST_ROW = 4;
 
+    /**
+     * 해당 메서드는 결국 엑셀파일에서 추출한 데이터를 기이수 과목으로 만들어서 저장하는 것 같다.
+     * 기이수 서비스라면, 기이수 과목을 저장하는 책임만 가지면 되는거 아닐까?
+     * 현재 메서드에는
+     * 1. 사용자가 업로드한 파일을 검증한다.
+     * 2. 사용자가 이전에 파일을 업로드한 적이 있으면, 데이터를 싹 지운다.
+     * 3. 엑셀 파일에서 추출한 데이터를 검증한다.
+     * 4. 기이수 과목 데이터를 저장한다.
+     *
+     * 여기서 기이수서비스의 핵심적인 책임은 무엇일까? 2번과 4번 같다.
+     * 1번과 3번은 업로드한 파일에 관련된 내용이며, 외부 의존성이라고 생각한다.
+     * 그리고 2번과 3번의 순서를 바꿔도 될 것 같다.
+     * 사용자가 업로드한 파일의 검증을 실패하면 애초에 저장을 하면 안되기 때문이다.
+     *
+     * 그러면, 기이수 서비스에 외부 파일과 관련된 의존성을 제거할 수 있다.
+     * 외부 데이터와 관련된 의존성은 별도의 파일 서비스로 분리하면 SRP 원칙을 지키며, 단위 테스트도 가능할 것 같다.
+     */
     public void extractExcelFile(MultipartFile file, UserDetails userDetails)
         throws IOException, FileException { //엑셀 데이터 추출
         //업로드 파일 검증
         String extension = FilenameUtils.getExtension(file.getOriginalFilename());
         validateExcelFile(file, extension); //업로드 파일 검증
 
-        //DB에 해당 사용자의 기이수 과목 정보 확인
-        Long studentId = Long.parseLong(userDetails.getUsername());
-        UserDomain user = userRepository.findByStudentId(studentId).get();
-        checkUser(user);
-
         ////엑셀 내용 검증
         Workbook workbook = creatWorkbook(file, extension);
         Sheet worksheet = workbook.getSheetAt(0);
         DataFormatter dataFormatter = new DataFormatter();
         validateExcelContent(worksheet, dataFormatter);
+
+        //DB에 해당 사용자의 기이수 과목 정보 확인
+        Long studentId = Long.parseLong(userDetails.getUsername());
+        UserDomain user = userRepository.findByStudentId(studentId).get();
+        checkUser(user);
 
         //데이터 추출
         extractData(worksheet, dataFormatter, user);
