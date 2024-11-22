@@ -29,7 +29,7 @@ public class FileServiceTest {
         );
 
         //when & then
-        Assertions.assertThatThrownBy(() -> fileService.validateFile(testFile))
+        Assertions.assertThatThrownBy(() -> fileService.createWorkbook(testFile))
                 .isInstanceOf(FileException.class)
                 .hasMessage(FileErrorMessage.ONLY_EXCEL_EXTENSION.getMessage());
     }
@@ -45,7 +45,7 @@ public class FileServiceTest {
         );
 
         //when & then
-        Assertions.assertThatThrownBy(() -> fileService.validateFile(testFile))
+        Assertions.assertThatThrownBy(() -> fileService.createWorkbook(testFile))
                 .isInstanceOf(FileException.class)
                 .hasMessage(FileErrorMessage.FILE_CONTENT_EMPTY.getMessage());
     }
