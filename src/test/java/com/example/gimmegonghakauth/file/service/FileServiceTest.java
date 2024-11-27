@@ -1,7 +1,11 @@
 package com.example.gimmegonghakauth.file.service;
 
-import com.example.gimmegonghakauth.completed.service.exception.FileException;
 import com.example.gimmegonghakauth.file.service.exception.FileErrorMessage;
+import com.example.gimmegonghakauth.file.service.exception.FileException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -48,5 +52,36 @@ public class FileServiceTest {
         Assertions.assertThatThrownBy(() -> fileService.createWorkbook(testFile))
                 .isInstanceOf(FileException.class)
                 .hasMessage(FileErrorMessage.FILE_CONTENT_EMPTY.getMessage());
+    }
+
+    @Test
+    @DisplayName("사용자가 올바른 기이수 성적파일을 업로드하면, 예외가 발생하지 않는다.")
+    void validateWorkbookTest1() throws IOException {
+        //given
+        String fileName = "기이수성적조회";
+        String filePath = "src/test/resources/file/기이수성적조회.xlsx";
+        File file = new File(filePath);
+        MockMultipartFile testFile = new MockMultipartFile(fileName, file.getName(), "xlsx", new FileInputStream(file));
+        final Workbook workbook = fileService.createWorkbook(testFile);
+
+        //when & then
+        Assertions.assertThatCode(() -> fileService.validateWorkbook(workbook))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    @DisplayName("사용자가 잘못된 기이수 성적파일을 업로드하면, 예외가 발생한다.")
+    void validateWorkbookTest2() throws IOException {
+        //given
+        String fileName = "수강신청내역조회";
+        String filePath = "src/test/resources/file/수강신청내역조회.xlsx";
+        File file = new File(filePath);
+        MockMultipartFile testFile = new MockMultipartFile(fileName, file.getName(), "xlsx", new FileInputStream(file));
+        final Workbook workbook = fileService.createWorkbook(testFile);
+
+        //when & then
+        Assertions.assertThatThrownBy(() -> fileService.validateWorkbook(workbook))
+                .isInstanceOf(FileException.class)
+                .hasMessage(FileErrorMessage.ONLY_COMPLETED_EXCEL_FILE.getMessage());
     }
 }

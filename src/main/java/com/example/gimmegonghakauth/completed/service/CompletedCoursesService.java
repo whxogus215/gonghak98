@@ -4,7 +4,7 @@ import com.example.gimmegonghakauth.common.domain.CoursesDomain;
 import com.example.gimmegonghakauth.common.infrastructure.CoursesDao;
 import com.example.gimmegonghakauth.completed.domain.CompletedCoursesDomain;
 import com.example.gimmegonghakauth.completed.infrastructure.CompletedCoursesDao;
-import com.example.gimmegonghakauth.completed.service.exception.FileException;
+import com.example.gimmegonghakauth.file.service.exception.FileException;
 import com.example.gimmegonghakauth.file.service.FileService;
 import com.example.gimmegonghakauth.user.domain.UserDomain;
 import com.example.gimmegonghakauth.user.infrastructure.UserRepository;
@@ -13,12 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,10 +61,12 @@ public class CompletedCoursesService {
         //업로드 파일 검증
         Workbook workbook = fileService.createWorkbook(file);
 
-        ////엑셀 내용 검증
-        Sheet worksheet = workbook.getSheetAt(0);
-        DataFormatter dataFormatter = new DataFormatter();
-        validateExcelContent(worksheet, dataFormatter);
+        //엑셀 내용 검증
+        /**
+         * 이것도 File의 책임인 것 같다.
+         * Excel Sheet를 가져와서 해당 내용을 검증하는 기능
+         */
+        fileService.validateWorkbook(workbook);
 
         //DB에 해당 사용자의 기이수 과목 정보 확인
         Long studentId = Long.parseLong(userDetails.getUsername());
@@ -74,7 +74,7 @@ public class CompletedCoursesService {
         checkUser(user);
 
         //데이터 추출
-        extractData(worksheet, dataFormatter, user);
+//        extractData(worksheet, dataFormatter, user);
     }
 
     @Transactional(readOnly = true)
@@ -113,33 +113,6 @@ public class CompletedCoursesService {
             completedCoursesList.add(data);  // 엔티티를 리스트에 추가
         }
         completedCoursesDao.saveAll(completedCoursesList);  // 한 번에 전체 엔티티 저장
-    }
-
-    // 엑셀 내용 검증
-    private void validateExcelContent(Sheet workSheet, DataFormatter dataFormatter)
-        throws FileException {
-        if (workSheet == null) {
-            throw new FileException("엑셀파일이 비어있습니다.");
-        }
-        Row row = workSheet.getRow(0);
-        if (row == null) { //엑셀파일이 비어있으면
-            throw new FileException("엑셀파일이 비어있습니다.");
-        }
-        String data = dataFormatter.formatCellValue(row.getCell(0));
-        if (!data.equals("기이수성적")) { //형식이 올바르지 않으면
-            throw new FileException("기이수성적 엑셀파일을 업로드 해주세요.");
-        }
-    }
-
-    //확장자에 맞춰서 workbook 리턴
-    private Workbook creatWorkbook(MultipartFile file, String extension) throws IOException {
-        Workbook workbook = null;
-        if (extension.equals("xlsx")) {
-            workbook = new XSSFWorkbook(file.getInputStream());
-        } else if (extension.equals("xls")) {
-            workbook = new HSSFWorkbook(file.getInputStream());
-        }
-        return workbook;
     }
 
     @Transactional

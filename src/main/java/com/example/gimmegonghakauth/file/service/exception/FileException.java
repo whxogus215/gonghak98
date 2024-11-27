@@ -1,4 +1,4 @@
-package com.example.gimmegonghakauth.completed.service.exception;
+package com.example.gimmegonghakauth.file.service.exception;
 
 public class FileException extends RuntimeException {
 
