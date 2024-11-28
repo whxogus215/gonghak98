@@ -40,7 +40,8 @@ public class CompletedCoursesController {
         model.addAttribute("datas",beforeDataList);
 
         try {
-            excelService.extractExcelFile(file, userDetails);
+            Long studentId = Long.parseLong(userDetails.getUsername());
+            excelService.extractExcelFile(file, studentId);
             List<CompletedCoursesDomain> afterDataList = excelService.getExcelList(userDetails);
             model.addAttribute("datas",afterDataList);
             return "excel/excelList";

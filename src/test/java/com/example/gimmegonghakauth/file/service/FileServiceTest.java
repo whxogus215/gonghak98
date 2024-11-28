@@ -1,12 +1,16 @@
 package com.example.gimmegonghakauth.file.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import com.example.gimmegonghakauth.file.service.exception.FileErrorMessage;
 import com.example.gimmegonghakauth.file.service.exception.FileException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.List;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +20,7 @@ import org.springframework.mock.web.MockMultipartFile;
 
 public class FileServiceTest {
 
+    private final int TEST_FILE_ROW_SIZE = 31;
     private FileService fileService;
 
     @BeforeEach
@@ -33,7 +38,7 @@ public class FileServiceTest {
         );
 
         //when & then
-        Assertions.assertThatThrownBy(() -> fileService.createWorkbook(testFile))
+        assertThatThrownBy(() -> fileService.createWorkbook(testFile))
                 .isInstanceOf(FileException.class)
                 .hasMessage(FileErrorMessage.ONLY_EXCEL_EXTENSION.getMessage());
     }
@@ -49,7 +54,7 @@ public class FileServiceTest {
         );
 
         //when & then
-        Assertions.assertThatThrownBy(() -> fileService.createWorkbook(testFile))
+        assertThatThrownBy(() -> fileService.createWorkbook(testFile))
                 .isInstanceOf(FileException.class)
                 .hasMessage(FileErrorMessage.FILE_CONTENT_EMPTY.getMessage());
     }
@@ -65,7 +70,7 @@ public class FileServiceTest {
         final Workbook workbook = fileService.createWorkbook(testFile);
 
         //when & then
-        Assertions.assertThatCode(() -> fileService.validateWorkbook(workbook))
+        assertThatCode(() -> fileService.validateWorkbook(workbook))
                 .doesNotThrowAnyException();
     }
 
@@ -80,8 +85,30 @@ public class FileServiceTest {
         final Workbook workbook = fileService.createWorkbook(testFile);
 
         //when & then
-        Assertions.assertThatThrownBy(() -> fileService.validateWorkbook(workbook))
+        assertThatThrownBy(() -> fileService.validateWorkbook(workbook))
                 .isInstanceOf(FileException.class)
                 .hasMessage(FileErrorMessage.ONLY_COMPLETED_EXCEL_FILE.getMessage());
+    }
+
+    @Test
+    @DisplayName("파일에서 데이터를 가져와서 과목정보를 갖는 DTO를 생성한다.")
+    void getUserCoursesFromFileTest() throws IOException {
+        //given
+        String fileName = "기이수성적조회";
+        String filePath = "src/test/resources/file/기이수성적조회.xlsx";
+        File file = new File(filePath);
+        MockMultipartFile testFile = new MockMultipartFile(fileName, file.getName(), "xlsx", new FileInputStream(file));
+        final Workbook workbook = fileService.createWorkbook(testFile);
+
+        //when
+        final List<UserCourseDto> courses = fileService.getUserCoursesFromFile(workbook);
+
+        //then
+        assertThat(courses.size()).isEqualTo(TEST_FILE_ROW_SIZE);
+        assertThat(courses).allSatisfy(course -> {
+            assertThat(course.courseId()).isNotNull();
+            assertThat(course.semester()).isNotNull();
+            assertThat(course.year()).isNotZero();
+        });
     }
 }

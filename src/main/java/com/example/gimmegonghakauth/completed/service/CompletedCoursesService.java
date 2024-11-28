@@ -4,18 +4,16 @@ import com.example.gimmegonghakauth.common.domain.CoursesDomain;
 import com.example.gimmegonghakauth.common.infrastructure.CoursesDao;
 import com.example.gimmegonghakauth.completed.domain.CompletedCoursesDomain;
 import com.example.gimmegonghakauth.completed.infrastructure.CompletedCoursesDao;
+import com.example.gimmegonghakauth.file.service.UserCourseDto;
 import com.example.gimmegonghakauth.file.service.exception.FileException;
 import com.example.gimmegonghakauth.file.service.FileService;
 import com.example.gimmegonghakauth.user.domain.UserDomain;
-import com.example.gimmegonghakauth.user.infrastructure.UserRepository;
+import com.example.gimmegonghakauth.user.service.UserService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -34,10 +32,8 @@ public class CompletedCoursesService {
 
     private final CompletedCoursesDao completedCoursesDao;
     private final CoursesDao coursesDao; // CoursesDao 변수 선언
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final FileService fileService;
-
-    final int FIRST_ROW = 4;
 
     /**
      * 해당 메서드는 결국 엑셀파일에서 추출한 데이터를 기이수 과목으로 만들어서 저장하는 것 같다.
@@ -56,8 +52,8 @@ public class CompletedCoursesService {
      * 그러면, 기이수 서비스에 외부 파일과 관련된 의존성을 제거할 수 있다.
      * 외부 데이터와 관련된 의존성은 별도의 파일 서비스로 분리하면 SRP 원칙을 지키며, 단위 테스트도 가능할 것 같다.
      */
-    public void extractExcelFile(MultipartFile file, UserDetails userDetails)
-        throws IOException, FileException { //엑셀 데이터 추출
+    public void extractExcelFile(MultipartFile file, Long studentId) throws IOException, FileException {
+        //엑셀 데이터 추출
         //업로드 파일 검증
         Workbook workbook = fileService.createWorkbook(file);
 
@@ -69,46 +65,45 @@ public class CompletedCoursesService {
         fileService.validateWorkbook(workbook);
 
         //DB에 해당 사용자의 기이수 과목 정보 확인
-        Long studentId = Long.parseLong(userDetails.getUsername());
-        UserDomain user = userRepository.findByStudentId(studentId).get();
+        UserDomain user = userService.getByStudentId(studentId);
+
+        //TODO 해당 메서드도 리팩토링해야됨! -> 얘는 CompletedCoursesService의 책임 같다.
         checkUser(user);
 
         //데이터 추출
-//        extractData(worksheet, dataFormatter, user);
+        List<UserCourseDto> userCourseDtos = fileService.getUserCoursesFromFile(workbook);
+        saveCompletedCourses(userCourseDtos, user);
     }
 
     @Transactional(readOnly = true)
     public List<CompletedCoursesDomain> getExcelList(UserDetails userDetails) {
         Long studentId = Long.parseLong(userDetails.getUsername());
-        UserDomain userDomain = userRepository.findByStudentId(studentId).get();
+        UserDomain userDomain = userService.getByStudentId(studentId);
 
         return completedCoursesDao.findByUserDomain(userDomain);
     }
 
     @Transactional
-    public void extractData(Sheet worksheet, DataFormatter dataFormatter, UserDomain userDomain) {
+    /**
+     * 해당 로직은 엑셀 파일의 형식에 의존하고 있다.
+     * 이 또한, FileService의 책임이라고 판단한다.
+     * CompletdCoursesService는 그저, 기이수 과목만 생성해서 저장만 하면 된다!
+     * FileService에서 DTO로 필요한 데이터만 넘겨주도록 하자.
+     */
+    public void saveCompletedCourses(List<UserCourseDto> userCourseDtos, UserDomain userDomain) {
         List<CompletedCoursesDomain> completedCoursesList = new ArrayList<>();  // 저장할 엔티티 리스트 생성
 
-        for (int i = FIRST_ROW; i < worksheet.getPhysicalNumberOfRows(); i++) { //데이터 추출
-            Row row = worksheet.getRow(i);
-
-            String yearAsString = dataFormatter.formatCellValue(row.getCell(1));
-            int year = Integer.parseInt(yearAsString) % 100;  //년도
-
-            String semester = dataFormatter.formatCellValue(row.getCell(2)); //학기
-
-            String courseIdAsString = dataFormatter.formatCellValue(row.getCell(3));
-            Long courseId = courseIdToLong(courseIdAsString); //학수번호
-
-            CoursesDomain coursesDomain = coursesDao.findByCourseId(courseId);// 학수번호를 기반으로 Courses 테이블 검색
+        for (UserCourseDto userCourse : userCourseDtos) {
+            // 학수번호를 기반으로 Courses 테이블 검색
+            CoursesDomain coursesDomain = coursesDao.findByCourseId(userCourse.courseId());
             if (coursesDomain == null) {
                 continue;
             }
             CompletedCoursesDomain data = CompletedCoursesDomain.builder()
                                                                 .userDomain(userDomain)
                                                                 .coursesDomain(coursesDomain)
-                                                                .year(year)
-                                                                .semester(semester)
+                                                                .year(userCourse.year())
+                                                                .semester(userCourse.semester())
                                                                 .build();
             completedCoursesList.add(data);  // 엔티티를 리스트에 추가
         }
@@ -124,16 +119,5 @@ public class CompletedCoursesService {
             // CompletedCourses 테이블에서 해당하는 행들을 삭제
             completedCoursesDao.deleteAllInBatch(coursesList);
         }
-    }
-
-    private Long courseIdToLong(String courseIdAsString) {
-        if (!Character.isDigit(courseIdAsString.charAt(0))){
-            if (courseIdAsString.charAt(0) == 'P'){
-                courseIdAsString = '0' + courseIdAsString.substring(1);
-            } else{
-                return 0L;
-            }
-        }
-        return Long.parseLong(courseIdAsString);
     }
 }
