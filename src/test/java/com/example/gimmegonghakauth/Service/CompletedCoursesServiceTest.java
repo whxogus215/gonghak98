@@ -4,7 +4,6 @@ import static com.example.gimmegonghakauth.file.service.FileServiceTest.TEST_FIL
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.example.gimmegonghakauth.completed.domain.CompletedCoursesDomain;
-import com.example.gimmegonghakauth.completed.infrastructure.CompletedCoursesDao;
 import com.example.gimmegonghakauth.completed.service.CompletedCoursesService;
 import com.example.gimmegonghakauth.user.domain.UserDomain;
 import com.example.gimmegonghakauth.user.infrastructure.UserRepository;
@@ -41,9 +40,6 @@ public class CompletedCoursesServiceTest {
     private UserRepository userRepository;
 
     @Autowired
-    private CompletedCoursesDao completedCoursesDao;
-
-    @Autowired
     private CompletedCoursesService completedCoursesService;
 
     @BeforeAll
@@ -75,7 +71,7 @@ public class CompletedCoursesServiceTest {
         completedCoursesService.saveCompletedCourses(testFile, TEST_ID);
 
         //then
-        List<CompletedCoursesDomain> findCourses = completedCoursesDao.findByUserDomain(user);
+        List<CompletedCoursesDomain> findCourses = completedCoursesService.getCompletedCourses(TEST_ID);
         assertThat(findCourses.size()).isEqualTo(TEST_FILE_ROW_SIZE);
     }
 
@@ -99,7 +95,7 @@ public class CompletedCoursesServiceTest {
         completedCoursesService.saveCompletedCourses(secondTestFile, TEST_ID);
 
         //then
-        List<CompletedCoursesDomain> findCourses = completedCoursesDao.findByUserDomain(user);
+        List<CompletedCoursesDomain> findCourses = completedCoursesService.getCompletedCourses(TEST_ID);
         assertThat(findCourses.size()).isEqualTo(secondRowSize);
         assertThat(findCourses.size()).isNotEqualTo(TEST_FILE_ROW_SIZE);
     }

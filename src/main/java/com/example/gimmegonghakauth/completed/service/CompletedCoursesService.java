@@ -4,9 +4,9 @@ import com.example.gimmegonghakauth.common.domain.CoursesDomain;
 import com.example.gimmegonghakauth.common.infrastructure.CoursesDao;
 import com.example.gimmegonghakauth.completed.domain.CompletedCoursesDomain;
 import com.example.gimmegonghakauth.completed.infrastructure.CompletedCoursesDao;
+import com.example.gimmegonghakauth.file.service.FileService;
 import com.example.gimmegonghakauth.file.service.UserCourseDto;
 import com.example.gimmegonghakauth.file.service.exception.FileException;
-import com.example.gimmegonghakauth.file.service.FileService;
 import com.example.gimmegonghakauth.user.domain.UserDomain;
 import com.example.gimmegonghakauth.user.service.UserService;
 import java.io.IOException;
@@ -15,7 +15,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -83,7 +82,7 @@ public class CompletedCoursesService {
      * CompletdCoursesService는 그저, 기이수 과목만 생성해서 저장만 하면 된다!
      * FileService에서 DTO로 필요한 데이터만 넘겨주도록 하자.
      */
-    private void saveCompletedCourses(List<UserCourseDto> userCourseDtos, UserDomain userDomain) {
+    public void saveCompletedCourses(List<UserCourseDto> userCourseDtos, UserDomain userDomain) {
         // CompletedCourses 테이블에서 파일을 업로드한 유저정보를 가지는 행들을 불러옴
         List<CompletedCoursesDomain> findCourses = completedCoursesDao.findByUserDomain(userDomain);
         // List가 Empty 가 아니면 (해당 유저가 파일을 업로드한 적이 있으면)
@@ -111,10 +110,8 @@ public class CompletedCoursesService {
     }
 
     @Transactional(readOnly = true)
-    public List<CompletedCoursesDomain> getCompletedCourses(UserDetails userDetails) {
-        Long studentId = Long.parseLong(userDetails.getUsername());
+    public List<CompletedCoursesDomain> getCompletedCourses(Long studentId) {
         UserDomain userDomain = userService.getByStudentId(studentId);
-
         return completedCoursesDao.findByUserDomain(userDomain);
     }
 }
