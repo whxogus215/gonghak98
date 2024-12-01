@@ -1,10 +1,10 @@
 package com.example.gimmegonghakauth.user.service;
 
-import com.example.gimmegonghakauth.completed.infrastructure.CompletedCoursesDao;
-import com.example.gimmegonghakauth.user.infrastructure.UserRepository;
-import com.example.gimmegonghakauth.completed.domain.CompletedCoursesDomain;
 import com.example.gimmegonghakauth.common.domain.MajorsDomain;
+import com.example.gimmegonghakauth.completed.domain.CompletedCoursesDomain;
+import com.example.gimmegonghakauth.completed.infrastructure.CompletedCoursesDao;
 import com.example.gimmegonghakauth.user.domain.UserDomain;
+import com.example.gimmegonghakauth.user.infrastructure.UserRepository;
 import com.example.gimmegonghakauth.user.service.dto.ChangePasswordDto;
 import com.example.gimmegonghakauth.user.service.dto.UserJoinDto;
 import com.example.gimmegonghakauth.user.service.exception.UserNotFoundException;
@@ -48,36 +48,45 @@ public class UserService {
     }
 
     public boolean joinValidation(UserJoinDto userJoinDto, BindingResult bindingResult) {
-        if (checkPassword(userJoinDto)) {
-            bindingResult.rejectValue("password2", "passwordInCorrect", "2개의 패스워드가 일치하지 않습니다.");
+        if (isPasswordMismatch(userJoinDto, bindingResult)) {
             return false;
         }
-        if (checkStudentId(userJoinDto.getStudentId())) {
-            bindingResult.rejectValue("studentId", "duplicate", "이미 등록된 학번입니다.");
+
+        if (isStudentIdDuplicate(userJoinDto.getStudentId(), bindingResult)) {
             return false;
         }
-        if (checkEmail(userJoinDto.getEmail())) {
-            bindingResult.rejectValue("email", "duplicate", "이미 등록된 이메일입니다.");
+
+        if (isEmailDuplicate(userJoinDto.getEmail(), bindingResult)) {
             return false;
         }
+
         return true;
     }
 
-    private boolean checkPassword(UserJoinDto userJoinDto) {
-        if (!userJoinDto.getPassword1().equals(userJoinDto.getPassword2())) {
-            return true;
+    private boolean isPasswordMismatch(UserJoinDto userJoinDto, BindingResult bindingResult) {
+        boolean mismatch = !userJoinDto.getPassword1().equals(userJoinDto.getPassword2());
+        if (mismatch) {
+            bindingResult.rejectValue("password2", "passwordInCorrect", "2개의 패스워드가 일치하지 않습니다.");
         }
-        return false;
+        return mismatch;
     }
 
-    private boolean checkStudentId(String studentId) {
-        return userRepository.existsByStudentId(Long.parseLong(studentId));
+    private boolean isStudentIdDuplicate(String studentId, BindingResult bindingResult) {
+        boolean duplicate = userRepository.existsByStudentId(Long.parseLong(studentId));
+        if (duplicate) {
+            bindingResult.rejectValue("studentId", "duplicate", "이미 등록된 학번입니다.");
+        }
+        return duplicate;
     }
 
-    private boolean checkEmail(String email) {
-        return userRepository.existsByEmail(email);
+    private boolean isEmailDuplicate(String email, BindingResult bindingResult) {
+        boolean duplicate = userRepository.existsByEmail(email);
+        if (duplicate) {
+            bindingResult.rejectValue("email", "duplicate", "이미 등록된 이메일입니다.");
+        }
+        return duplicate;
     }
-
+    
     public boolean withdrawal(String _studentId, String password) {
         Long studentId = Long.parseLong(_studentId);
 
