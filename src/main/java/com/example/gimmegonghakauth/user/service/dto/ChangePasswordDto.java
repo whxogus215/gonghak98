@@ -1,11 +1,13 @@
 package com.example.gimmegonghakauth.user.service.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class ChangePasswordDto {
     @NotBlank(message = "기존 비밀번호를 입력해주세요.")
     private String currentPassword;

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.example.gimmegonghakauth.user.domain.UserDomain;
+import com.example.gimmegonghakauth.user.service.dto.ChangePasswordDto;
 import com.example.gimmegonghakauth.user.service.dto.UserJoinDto;
 import com.example.gimmegonghakauth.user.service.exception.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -172,4 +173,56 @@ class UserServiceTest {
         assertThat(bindingResult.hasErrors()).isTrue();
     }
 
+    @Test
+    @Tag("setupRequired")
+    void changePasswordValidation_성공() {
+        // given
+        ChangePasswordDto changePasswordDto = new ChangePasswordDto(password, "new_password",
+            "new_password");
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(changePasswordDto,
+            "changePasswordDto");
+
+        // when
+        boolean isValid = userService.changePasswordValidation(changePasswordDto, bindingResult,
+            user);
+
+        // then
+        assertThat(isValid).isTrue();
+    }
+
+    @Test
+    @Tag("setupRequired")
+    void changePasswordValidation_현재_패스워드가_틀리면_실패() {
+        // given
+        ChangePasswordDto changePasswordDto = new ChangePasswordDto("wrong_password",
+            "new_password", "new_password");
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(changePasswordDto,
+            "changePasswordDto");
+
+        // when
+        boolean isValid = userService.changePasswordValidation(changePasswordDto, bindingResult,
+            user);
+
+        // then
+        assertThat(isValid).isFalse();
+        assertThat(bindingResult.hasErrors()).isTrue();
+    }
+
+    @Test
+    @Tag("setupRequired")
+    void changePasswordValidation_새_패스워드가_일치하지_않으면_실패() {
+        // given
+        ChangePasswordDto changePasswordDto = new ChangePasswordDto(password, "new_password",
+            "mismatch_password");
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(changePasswordDto,
+            "changePasswordDto");
+
+        // when
+        boolean isValid = userService.changePasswordValidation(changePasswordDto, bindingResult,
+            user);
+
+        // then
+        assertThat(isValid).isFalse();
+        assertThat(bindingResult.hasErrors()).isTrue();
+    }
 }
