@@ -90,20 +90,36 @@ public class UserService {
     public boolean withdrawal(String _studentId, String password) {
         Long studentId = Long.parseLong(_studentId);
 
-        UserDomain user = userRepository.findByStudentId(studentId)
-            .orElseThrow(() -> new UsernameNotFoundException("학번이 존재하지 않습니다."));
+        UserDomain user = findUserByStudentId(studentId);
 
-        if (userEncoder.matches(password, user.getPassword())) {
-            List<CompletedCoursesDomain> coursesList = completedCoursesDao.findByUserDomain(user);
-            if (!coursesList.isEmpty()) {
-                // CompletedCourses 테이블에서 해당하는 행들을 삭제
-                completedCoursesDao.deleteAllInBatch(coursesList);
-            } //해당 유저를 참조하는 CompletedCourses 테이블 먼저 삭제
-            userRepository.delete(user);
-            return true;
-        } else {
+        if (!isPasswordValid(user, password)) {
             return false;
         }
+
+        deleteAssociatedCourses(user);
+        deleteUser(user);
+
+        return true;
+    }
+
+    private UserDomain findUserByStudentId(Long studentId) {
+        return userRepository.findByStudentId(studentId)
+            .orElseThrow(() -> new UsernameNotFoundException("학번이 존재하지 않습니다."));
+    }
+
+    private boolean isPasswordValid(UserDomain user, String password) {
+        return userEncoder.matches(password, user.getPassword());
+    }
+
+    private void deleteAssociatedCourses(UserDomain user) {
+        List<CompletedCoursesDomain> coursesList = completedCoursesDao.findByUserDomain(user);
+        if (!coursesList.isEmpty()) {
+            completedCoursesDao.deleteAllInBatch(coursesList);
+        }
+    }
+
+    private void deleteUser(UserDomain user) {
+        userRepository.delete(user);
     }
 
     public boolean changePasswordValidation(ChangePasswordDto changePasswordDto,
