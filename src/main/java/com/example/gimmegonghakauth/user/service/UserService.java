@@ -124,25 +124,51 @@ public class UserService {
 
     public boolean changePasswordValidation(ChangePasswordDto changePasswordDto,
         BindingResult bindingResult, UserDomain user) {
-        String password = user.getPassword();
-        String inputPassword = changePasswordDto.getCurrentPassword();
-        if (!userEncoder.matches(inputPassword, password)) { //입력한 패스워드가 현재 패스워드와 일치하지 않을 경우
-            bindingResult.rejectValue("currentPassword", "currentPasswordInCorrect",
-                "현재 패스워드가 일치하지 않습니다.");
+
+        if (isCurrentPasswordInvalid(changePasswordDto.getCurrentPassword(), user.getPassword(),
+            bindingResult)) {
             return false;
         }
-        if (userEncoder.matches(changePasswordDto.getNewPassword1(),
-            password)) { //입력한 새 패스워드가 현재 패스워드와 일치하는 경우
-            bindingResult.rejectValue("newPassword1", "sameCurrentPassword",
-                "현재 패스워드와 다른 패스워드를 입력해주세요.");
+        if (isNewPasswordSameAsCurrent(changePasswordDto.getNewPassword1(), user.getPassword(),
+            bindingResult)) {
             return false;
         }
-        if (!changePasswordDto.getNewPassword1()
-            .equals(changePasswordDto.getNewPassword2())) {//새 패스워드 2개의 입력이 일치하지 않는 경우
-            bindingResult.rejectValue("newPassword2", "newPasswordInCorrect",
-                "입력한 패스워드가 일치하지 않습니다.");
+        if (isNewPasswordMismatch(changePasswordDto.getNewPassword1(),
+            changePasswordDto.getNewPassword2(), bindingResult)) {
             return false;
         }
+
         return true;
     }
+
+    private boolean isCurrentPasswordInvalid(String inputPassword, String currentPassword,
+        BindingResult bindingResult) {
+        if (!userEncoder.matches(inputPassword, currentPassword)) {
+            bindingResult.rejectValue("currentPassword", "currentPasswordInCorrect",
+                "현재 패스워드가 일치하지 않습니다.");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isNewPasswordSameAsCurrent(String newPassword, String currentPassword,
+        BindingResult bindingResult) {
+        if (userEncoder.matches(newPassword, currentPassword)) {
+            bindingResult.rejectValue("newPassword1", "sameCurrentPassword",
+                "현재 패스워드와 다른 패스워드를 입력해주세요.");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isNewPasswordMismatch(String newPassword1, String newPassword2,
+        BindingResult bindingResult) {
+        if (!newPassword1.equals(newPassword2)) {
+            bindingResult.rejectValue("newPassword2", "newPasswordInCorrect",
+                "입력한 패스워드가 일치하지 않습니다.");
+            return true;
+        }
+        return false;
+    }
+
 }
