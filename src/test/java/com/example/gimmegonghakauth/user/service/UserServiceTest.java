@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.example.gimmegonghakauth.user.domain.UserDomain;
+import com.example.gimmegonghakauth.user.service.dto.UserJoinDto;
 import com.example.gimmegonghakauth.user.service.exception.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BeanPropertyBindingResult;
 
 @SpringBootTest
 @Transactional
@@ -99,6 +101,75 @@ class UserServiceTest {
 
         // then
         assertThat(result).isFalse();
+    }
+
+    @Test
+    void joinValidation_가입검증_성공() {
+        // given
+        UserJoinDto joinDto = new UserJoinDto(String.valueOf(id), password, password, email, null,
+            null, name);
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(joinDto,
+            "userJoinDto");
+
+        // when
+        boolean isValid = userService.joinValidation(joinDto, bindingResult);
+
+        // then
+        assertThat(isValid).isTrue();
+        assertThat(bindingResult.hasErrors()).isFalse();
+    }
+
+    @Test
+    void joinValidation_비밀번호가_일치하지_않으면_가입검증_실패() {
+        // given
+        String password2 = "wrong_password";
+        UserJoinDto joinDto = new UserJoinDto(String.valueOf(id), password, password2, email, null,
+            null, name);
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(joinDto,
+            "userJoinDto");
+
+        // when
+        boolean isValid = userService.joinValidation(joinDto, bindingResult);
+
+        // then
+        assertThat(isValid).isFalse();
+        assertThat(bindingResult.hasErrors()).isTrue();
+    }
+
+    @Test
+    @Tag("setupRequired")
+    void joinValidation_학번이_중복되면_가입검증_실패() {
+        // given
+        String email = "test@naver.com";
+        UserJoinDto joinDto = new UserJoinDto(String.valueOf(id), password, password, email, null,
+            null, name);
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(joinDto,
+            "userJoinDto");
+
+        // when
+        boolean isValid = userService.joinValidation(joinDto, bindingResult);
+
+        // then
+        assertThat(isValid).isFalse();
+        assertThat(bindingResult.hasErrors()).isTrue();
+    }
+
+    @Test
+    @Tag("setupRequired")
+    void joinValidation_이메일이_중복되면_가입검증_실패() {
+        // given
+        Long id = 10000000L;
+        UserJoinDto joinDto = new UserJoinDto(String.valueOf(id), password, password, email, null,
+            null, name);
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(joinDto,
+            "userJoinDto");
+
+        // when
+        boolean isValid = userService.joinValidation(joinDto, bindingResult);
+
+        // then
+        assertThat(isValid).isFalse();
+        assertThat(bindingResult.hasErrors()).isTrue();
     }
 
 }
