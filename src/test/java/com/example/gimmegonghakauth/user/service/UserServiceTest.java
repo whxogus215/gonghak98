@@ -80,4 +80,25 @@ class UserServiceTest {
         assertThatThrownBy(() -> userService.getByStudentId(wrongId))
             .isInstanceOf(UserNotFoundException.class);
     }
+
+    @Test
+    @Tag("setupRequired")
+    void withdrawal로_유저를_삭제할_수_있다() {
+        // when
+        boolean result = userService.withdrawal(String.valueOf(id), password);
+
+        // then
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    @Tag("setupRequired")
+    void withdrawal_비밀번호가_틀리면_삭제되지_않는다() {
+        // when
+        boolean result = userService.withdrawal(String.valueOf(id), "wrong_password");
+
+        // then
+        assertThat(result).isFalse();
+    }
+
 }
