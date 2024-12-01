@@ -3,9 +3,12 @@ package com.example.gimmegonghakauth.user.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.example.gimmegonghakauth.user.service.exception.UserNotFoundException;
 import com.example.gimmegonghakauth.user.domain.UserDomain;
+import com.example.gimmegonghakauth.user.service.exception.UserNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -24,6 +27,15 @@ class UserServiceTest {
     @Autowired
     private UserService userService;
 
+    private UserDomain user;
+
+    @BeforeEach
+    void createUser(TestInfo testInfo) {
+        if (testInfo.getTags().contains("setupRequired")) {
+            user = userService.create(String.valueOf(id), password, email, null, name);
+        }
+    }
+
     @Test
     void create로_유저를_생성할_수_있다() {
         //givne, when
@@ -34,9 +46,9 @@ class UserServiceTest {
     }
 
     @Test
+    @Tag("setupRequired")
     void updatePassword로_유저의_비밀번호를_변경할_수_있다() {
         //given
-        UserDomain user = userService.create(String.valueOf(id), password, email, null, name);
         String newPassword = "test123";
 
         //when
@@ -47,10 +59,8 @@ class UserServiceTest {
     }
 
     @Test
+    @Tag("setupRequired")
     void 사용자의_학번으로_User를_가져올_수_있다() {
-        //given
-        UserDomain user = userService.create(String.valueOf(id), password, email, null, name);
-
         //when
         UserDomain findUser = userService.getByStudentId(id);
 
@@ -61,9 +71,9 @@ class UserServiceTest {
     }
 
     @Test
+    @Tag("setupRequired")
     void 사용자의_학번으로_User를_찾지_못하면_예외가_발생한다() {
         //given
-        UserDomain user = userService.create(String.valueOf(id), password, email, null, name);
         Long wrongId = 10000000L;
 
         //when & then
