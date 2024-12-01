@@ -18,16 +18,16 @@ import java.util.List;
 @Controller
 public class CompletedCoursesController {
 
-    private final CompletedCoursesService excelService;
+    private final CompletedCoursesService completedCoursesService;
 
-    public CompletedCoursesController(CompletedCoursesService excelService) {
-        this.excelService = excelService;
+    public CompletedCoursesController(CompletedCoursesService completedCoursesService) {
+        this.completedCoursesService = completedCoursesService;
     }
 
     @GetMapping("/excel")
     public String excel(Model model, Authentication authentication){
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        List<CompletedCoursesDomain> dataList = excelService.getExcelList(userDetails);
+        List<CompletedCoursesDomain> dataList = completedCoursesService.getCompletedCourses(userDetails);
         model.addAttribute("datas",dataList);
         return "excel/excelList";
     }
@@ -36,13 +36,13 @@ public class CompletedCoursesController {
     public String readExcel(@RequestParam("file") MultipartFile file, Model model,
         Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        List<CompletedCoursesDomain> beforeDataList = excelService.getExcelList(userDetails);
+        List<CompletedCoursesDomain> beforeDataList = completedCoursesService.getCompletedCourses(userDetails);
         model.addAttribute("datas",beforeDataList);
 
         try {
             Long studentId = Long.parseLong(userDetails.getUsername());
-            excelService.extractExcelFile(file, studentId);
-            List<CompletedCoursesDomain> afterDataList = excelService.getExcelList(userDetails);
+            completedCoursesService.saveCompletedCourses(file, studentId);
+            List<CompletedCoursesDomain> afterDataList = completedCoursesService.getCompletedCourses(userDetails);
             model.addAttribute("datas",afterDataList);
             return "excel/excelList";
         } catch (IOException | FileException e) {

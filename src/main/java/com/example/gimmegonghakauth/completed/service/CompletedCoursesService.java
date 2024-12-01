@@ -52,7 +52,7 @@ public class CompletedCoursesService {
      * 그러면, 기이수 서비스에 외부 파일과 관련된 의존성을 제거할 수 있다.
      * 외부 데이터와 관련된 의존성은 별도의 파일 서비스로 분리하면 SRP 원칙을 지키며, 단위 테스트도 가능할 것 같다.
      */
-    public void extractExcelFile(MultipartFile file, Long studentId) throws IOException, FileException {
+    public void saveCompletedCourses(MultipartFile file, Long studentId) throws IOException, FileException {
         //엑셀 데이터 추출
         //업로드 파일 검증
         Workbook workbook = fileService.createWorkbook(file);
@@ -63,24 +63,17 @@ public class CompletedCoursesService {
          * Excel Sheet를 가져와서 해당 내용을 검증하는 기능
          */
         fileService.validateWorkbook(workbook);
+        List<UserCourseDto> userCourseDtos = fileService.getUserCoursesFromFile(workbook);
 
         //DB에 해당 사용자의 기이수 과목 정보 확인
         UserDomain user = userService.getByStudentId(studentId);
 
         //TODO 해당 메서드도 리팩토링해야됨! -> 얘는 CompletedCoursesService의 책임 같다.
-        checkUser(user);
-
-        //데이터 추출
-        List<UserCourseDto> userCourseDtos = fileService.getUserCoursesFromFile(workbook);
+        /**
+         * 현재 하나의 서비스 메서드 안에 두 개의 트랜잭션이 독립적으로 존재하는데, 이 때 한 쪽에서 예외가 발생하면 어떻게 동작하는거지?
+         * 1. 스프링 트랜잭션에 대한 이해가 필요하다. -> 스프링 트랜잭션만! 전파는 ㄴㄴ
+         */
         saveCompletedCourses(userCourseDtos, user);
-    }
-
-    @Transactional(readOnly = true)
-    public List<CompletedCoursesDomain> getExcelList(UserDetails userDetails) {
-        Long studentId = Long.parseLong(userDetails.getUsername());
-        UserDomain userDomain = userService.getByStudentId(studentId);
-
-        return completedCoursesDao.findByUserDomain(userDomain);
     }
 
     @Transactional
@@ -90,9 +83,16 @@ public class CompletedCoursesService {
      * CompletdCoursesService는 그저, 기이수 과목만 생성해서 저장만 하면 된다!
      * FileService에서 DTO로 필요한 데이터만 넘겨주도록 하자.
      */
-    public void saveCompletedCourses(List<UserCourseDto> userCourseDtos, UserDomain userDomain) {
-        List<CompletedCoursesDomain> completedCoursesList = new ArrayList<>();  // 저장할 엔티티 리스트 생성
+    private void saveCompletedCourses(List<UserCourseDto> userCourseDtos, UserDomain userDomain) {
+        // CompletedCourses 테이블에서 파일을 업로드한 유저정보를 가지는 행들을 불러옴
+        List<CompletedCoursesDomain> findCourses = completedCoursesDao.findByUserDomain(userDomain);
+        // List가 Empty 가 아니면 (해당 유저가 파일을 업로드한 적이 있으면)
+        if (!findCourses.isEmpty()) {
+            // CompletedCourses 테이블에서 해당하는 행들을 삭제
+            completedCoursesDao.deleteAllInBatch(findCourses);
+        }
 
+        List<CompletedCoursesDomain> saveCourses = new ArrayList<>();  // 저장할 엔티티 리스트 생성
         for (UserCourseDto userCourse : userCourseDtos) {
             // 학수번호를 기반으로 Courses 테이블 검색
             CoursesDomain coursesDomain = coursesDao.findByCourseId(userCourse.courseId());
@@ -100,24 +100,21 @@ public class CompletedCoursesService {
                 continue;
             }
             CompletedCoursesDomain data = CompletedCoursesDomain.builder()
-                                                                .userDomain(userDomain)
-                                                                .coursesDomain(coursesDomain)
-                                                                .year(userCourse.year())
-                                                                .semester(userCourse.semester())
-                                                                .build();
-            completedCoursesList.add(data);  // 엔티티를 리스트에 추가
+                    .userDomain(userDomain)
+                    .coursesDomain(coursesDomain)
+                    .year(userCourse.year())
+                    .semester(userCourse.semester())
+                    .build();
+            saveCourses.add(data);  // 엔티티를 리스트에 추가
         }
-        completedCoursesDao.saveAll(completedCoursesList);  // 한 번에 전체 엔티티 저장
+        completedCoursesDao.saveAll(saveCourses);  // 한 번에 전체 엔티티 저장
     }
 
-    @Transactional
-    public void checkUser(UserDomain userDomain) {
-        // CompletedCourses 테이블에서 파일을 업로드한 유저정보를 가지는 행들을 불러옴
-        List<CompletedCoursesDomain> coursesList = completedCoursesDao.findByUserDomain(userDomain);
-        // List가 Empty 가 아니면 (해당 유저가 파일을 업로드한 적이 있으면)
-        if (!coursesList.isEmpty()) {
-            // CompletedCourses 테이블에서 해당하는 행들을 삭제
-            completedCoursesDao.deleteAllInBatch(coursesList);
-        }
+    @Transactional(readOnly = true)
+    public List<CompletedCoursesDomain> getCompletedCourses(UserDetails userDetails) {
+        Long studentId = Long.parseLong(userDetails.getUsername());
+        UserDomain userDomain = userService.getByStudentId(studentId);
+
+        return completedCoursesDao.findByUserDomain(userDomain);
     }
 }

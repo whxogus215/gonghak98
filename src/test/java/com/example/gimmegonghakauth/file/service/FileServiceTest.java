@@ -20,7 +20,7 @@ import org.springframework.mock.web.MockMultipartFile;
 
 public class FileServiceTest {
 
-    private final int TEST_FILE_ROW_SIZE = 31;
+    public static final int TEST_FILE_ROW_SIZE = 31;
     private FileService fileService;
 
     @BeforeEach
