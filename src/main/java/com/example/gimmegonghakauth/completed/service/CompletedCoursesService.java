@@ -24,33 +24,11 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class CompletedCoursesService {
 
-    /**
-     * 1. CompletedCoursesService가 기이수 과목을 처리하는 느낌보다는 엑셀 파일을 다루는 책임이 더 많게 느껴졌다.
-     * 2. 따라서 관련 메서드들이 기이수 과목을 어떻게 한다는건지 한 번에 이해하기가 어려웠다.
-     */
-
     private final CompletedCoursesDao completedCoursesDao;
     private final CoursesDao coursesDao; // CoursesDao 변수 선언
     private final UserService userService;
     private final FileService fileService;
 
-    /**
-     * 해당 메서드는 결국 엑셀파일에서 추출한 데이터를 기이수 과목으로 만들어서 저장하는 것 같다.
-     * 기이수 서비스라면, 기이수 과목을 저장하는 책임만 가지면 되는거 아닐까?
-     * 현재 메서드에는
-     * 1. 사용자가 업로드한 파일을 검증한다.
-     * 2. 사용자가 이전에 파일을 업로드한 적이 있으면, 데이터를 싹 지운다.
-     * 3. 엑셀 파일에서 추출한 데이터를 검증한다.
-     * 4. 기이수 과목 데이터를 저장한다.
-     *
-     * 여기서 기이수서비스의 핵심적인 책임은 무엇일까? 2번과 4번 같다.
-     * 1번과 3번은 업로드한 파일에 관련된 내용이며, 외부 의존성이라고 생각한다.
-     * 그리고 2번과 3번의 순서를 바꿔도 될 것 같다.
-     * 사용자가 업로드한 파일의 검증을 실패하면 애초에 저장을 하면 안되기 때문이다.
-     *
-     * 그러면, 기이수 서비스에 외부 파일과 관련된 의존성을 제거할 수 있다.
-     * 외부 데이터와 관련된 의존성은 별도의 파일 서비스로 분리하면 SRP 원칙을 지키며, 단위 테스트도 가능할 것 같다.
-     */
     public void saveCompletedCourses(MultipartFile file, Long studentId) throws IOException, FileException {
         //엑셀 데이터 추출
         //업로드 파일 검증
@@ -67,21 +45,10 @@ public class CompletedCoursesService {
         //DB에 해당 사용자의 기이수 과목 정보 확인
         UserDomain user = userService.getByStudentId(studentId);
 
-        //TODO 해당 메서드도 리팩토링해야됨! -> 얘는 CompletedCoursesService의 책임 같다.
-        /**
-         * 현재 하나의 서비스 메서드 안에 두 개의 트랜잭션이 독립적으로 존재하는데, 이 때 한 쪽에서 예외가 발생하면 어떻게 동작하는거지?
-         * 1. 스프링 트랜잭션에 대한 이해가 필요하다. -> 스프링 트랜잭션만! 전파는 ㄴㄴ
-         */
         saveCompletedCourses(userCourseDtos, user);
     }
 
     @Transactional
-    /**
-     * 해당 로직은 엑셀 파일의 형식에 의존하고 있다.
-     * 이 또한, FileService의 책임이라고 판단한다.
-     * CompletdCoursesService는 그저, 기이수 과목만 생성해서 저장만 하면 된다!
-     * FileService에서 DTO로 필요한 데이터만 넘겨주도록 하자.
-     */
     public void saveCompletedCourses(List<UserCourseDto> userCourseDtos, UserDomain userDomain) {
         // CompletedCourses 테이블에서 파일을 업로드한 유저정보를 가지는 행들을 불러옴
         List<CompletedCoursesDomain> findCourses = completedCoursesDao.findByUserDomain(userDomain);

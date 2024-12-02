@@ -53,11 +53,6 @@ public class CompletedCoursesServiceTest {
 
     @Test
     @DisplayName("기이수 성적 파일을 업로드하면, 기이수 성적 과목이 저장된다.")
-    /**
-     * CompletedCoursesService(C.C.S)에 대한 테스트인지가 의문이 들었음.
-     * - C.C.S와 의존관계인 Dao 객체의 메서드만 호출하지 정작 서비스 계층의 메서드는 호출하지 않고 있음.
-     * - 서비스 계층에 대한 테스트 보다는 Dao(리포지토리)에 대한 테스트에 가까워 보임.
-     */
     public void saveCompletedCoursesTest() throws IOException {
         //given
         MockMultipartFile testFile = 기이수성적조회_파일_생성("src/test/resources/file/기이수성적조회.xlsx");
