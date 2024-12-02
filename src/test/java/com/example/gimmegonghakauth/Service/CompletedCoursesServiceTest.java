@@ -1,19 +1,17 @@
 package com.example.gimmegonghakauth.Service;
 
 import static com.example.gimmegonghakauth.file.service.FileServiceTest.TEST_FILE_ROW_SIZE;
+import static com.example.gimmegonghakauth.file.service.FileServiceTest.기이수성적조회_파일_생성;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.example.gimmegonghakauth.completed.domain.CompletedCoursesDomain;
 import com.example.gimmegonghakauth.completed.service.CompletedCoursesService;
 import com.example.gimmegonghakauth.user.domain.UserDomain;
 import com.example.gimmegonghakauth.user.infrastructure.UserRepository;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -27,10 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
-@Nested
 @Import(CompletedCoursesService.class)
 @ActiveProfiles("test")
 @TestInstance(Lifecycle.PER_CLASS)
+@SuppressWarnings("NonAsciiCharacters")
 public class CompletedCoursesServiceTest {
 
     private static final long TEST_ID = 19111111L;
@@ -62,10 +60,7 @@ public class CompletedCoursesServiceTest {
      */
     public void saveCompletedCoursesTest() throws IOException {
         //given
-        String fileName = "기이수성적조회";
-        String filePath = "src/test/resources/file/기이수성적조회.xlsx";
-        File file = new File(filePath);
-        MockMultipartFile testFile = new MockMultipartFile(fileName, file.getName(), "xlsx", new FileInputStream(file));
+        MockMultipartFile testFile = 기이수성적조회_파일_생성("src/test/resources/file/기이수성적조회.xlsx");
 
         //when
         completedCoursesService.saveCompletedCourses(testFile, TEST_ID);
@@ -79,19 +74,12 @@ public class CompletedCoursesServiceTest {
     @DisplayName("성적파일을 업로드했던 유저가 다시 업로드하면, 초기화 후 새로 저장된다.")
     public void saveCompletedCoursesTest2() throws IOException {
         //given
-        String fileName = "기이수성적조회";
-        String filePath = "src/test/resources/file/기이수성적조회.xlsx";
-        File file = new File(filePath);
-        MockMultipartFile testFile = new MockMultipartFile(fileName, file.getName(), "xlsx", new FileInputStream(file));
+        MockMultipartFile testFile = 기이수성적조회_파일_생성("src/test/resources/file/기이수성적조회.xlsx");
+        MockMultipartFile secondTestFile = 기이수성적조회_파일_생성("src/test/resources/file/기이수성적조회_46과목.xlsx");
+        int secondRowSize = 46;
         completedCoursesService.saveCompletedCourses(testFile, TEST_ID);
 
         //when
-        String secondFileName = "기이수성적조회";
-        String secondFilePath = "src/test/resources/file/기이수성적조회_46과목.xlsx";
-        File secondFile = new File(secondFilePath);
-        MockMultipartFile secondTestFile = new MockMultipartFile(
-                secondFileName, secondFile.getName(), "xlsx", new FileInputStream(secondFile));
-        int secondRowSize = 46;
         completedCoursesService.saveCompletedCourses(secondTestFile, TEST_ID);
 
         //then

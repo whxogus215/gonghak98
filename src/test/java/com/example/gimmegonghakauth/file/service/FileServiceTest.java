@@ -18,6 +18,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.mock.web.MockMultipartFile;
 
+@SuppressWarnings("NonAsciiCharacters")
 public class FileServiceTest {
 
     public static final int TEST_FILE_ROW_SIZE = 31;
@@ -32,10 +33,7 @@ public class FileServiceTest {
     @DisplayName("사용자가 업로드한 파일의 확장자가 엑셀(xlsx, xls)이 아니면 예외가 발생한다.")
     void fileServiceTest() {
         //given
-        MockMultipartFile testFile = new MockMultipartFile(
-                "테스트",
-                "테스트".getBytes()
-        );
+        MockMultipartFile testFile = new MockMultipartFile("테스트", "테스트".getBytes());
 
         //when & then
         assertThatThrownBy(() -> fileService.createWorkbook(testFile))
@@ -48,10 +46,7 @@ public class FileServiceTest {
     @DisplayName("사용자가 비어있는 파일을 업로드하면 예외가 발생한다.")
     void fileServiceTest2(final String extension) {
         //given
-        MockMultipartFile testFile = new MockMultipartFile(
-                "테스트." + extension,
-                new byte[0]
-        );
+        MockMultipartFile testFile = new MockMultipartFile("테스트." + extension, new byte[0]);
 
         //when & then
         assertThatThrownBy(() -> fileService.createWorkbook(testFile))
@@ -63,10 +58,7 @@ public class FileServiceTest {
     @DisplayName("사용자가 올바른 기이수 성적파일을 업로드하면, 예외가 발생하지 않는다.")
     void validateWorkbookTest1() throws IOException {
         //given
-        String fileName = "기이수성적조회";
-        String filePath = "src/test/resources/file/기이수성적조회.xlsx";
-        File file = new File(filePath);
-        MockMultipartFile testFile = new MockMultipartFile(fileName, file.getName(), "xlsx", new FileInputStream(file));
+        final MockMultipartFile testFile = 기이수성적조회_파일_생성("src/test/resources/file/기이수성적조회.xlsx");
         final Workbook workbook = fileService.createWorkbook(testFile);
 
         //when & then
@@ -78,10 +70,7 @@ public class FileServiceTest {
     @DisplayName("사용자가 잘못된 기이수 성적파일을 업로드하면, 예외가 발생한다.")
     void validateWorkbookTest2() throws IOException {
         //given
-        String fileName = "수강신청내역조회";
-        String filePath = "src/test/resources/file/수강신청내역조회.xlsx";
-        File file = new File(filePath);
-        MockMultipartFile testFile = new MockMultipartFile(fileName, file.getName(), "xlsx", new FileInputStream(file));
+        final MockMultipartFile testFile = 기이수성적조회_파일_생성("src/test/resources/file/수강신청내역조회.xlsx");
         final Workbook workbook = fileService.createWorkbook(testFile);
 
         //when & then
@@ -94,10 +83,7 @@ public class FileServiceTest {
     @DisplayName("파일에서 데이터를 가져와서 과목정보를 갖는 DTO를 생성한다.")
     void getUserCoursesFromFileTest() throws IOException {
         //given
-        String fileName = "기이수성적조회";
-        String filePath = "src/test/resources/file/기이수성적조회.xlsx";
-        File file = new File(filePath);
-        MockMultipartFile testFile = new MockMultipartFile(fileName, file.getName(), "xlsx", new FileInputStream(file));
+        final MockMultipartFile testFile = 기이수성적조회_파일_생성("src/test/resources/file/기이수성적조회.xlsx");
         final Workbook workbook = fileService.createWorkbook(testFile);
 
         //when
@@ -110,5 +96,11 @@ public class FileServiceTest {
             assertThat(course.semester()).isNotNull();
             assertThat(course.year()).isNotZero();
         });
+    }
+
+    public static MockMultipartFile 기이수성적조회_파일_생성(final String filePath) throws IOException {
+        String fileName = "기이수성적조회";
+        File file = new File(filePath);
+        return new MockMultipartFile(fileName, file.getName(), "xlsx", new FileInputStream(file));
     }
 }
