@@ -1,4 +1,4 @@
-<html layout:decorate="~{layout/layout2}">
+<html layout:decorate="~{layout/userLayout}">
 <div class="container my-3" layout:fragment="content">
   <div class="window" style="width: 100%;margin-top: 10%">
     <div class="title-bar">
@@ -17,6 +17,9 @@
         </a>
       </div>
     </div>
+
+    <div id="abeekDetailModal" th:insert="~{gonghak/abeekDetailModal :: modal}"></div>
+
     <div class="window-body" style="text-align: center">
       <div style="margin-top: 30px; margin-bottom: 40px">
         <div class="py-5 text-center">
@@ -25,27 +28,33 @@
         <div class="table-container m-3" style="max-height: 500px; overflow-y: auto">
           <table class="table" style="font-size:20px">
             <thead>
-            <tr class="table-dark">
-              <th>Abeek 타입</th>
-              <th>얻은 학점</th>
-              <th>기준 학점</th>
-              <th>진행도</th>
-              <th></th>
-            </tr>
+              <tr class="table-dark">
+                <th>Abeek 타입</th>
+                <th>얻은 학점</th>
+                <th>기준 학점</th>
+                <th>진행도</th>
+                <th></th>
+              </tr>
             </thead>
             <tbody>
-            <tr th:each="resultRatio : ${userResultRatio}">
-              <td th:text="${resultRatio.getKey().getTypeMessage()}"></td>
-              <td th:text="${resultRatio.value.getUserPoint()}"></td>
-              <td th:text="${resultRatio.value.getStandardPoint()}"></td>
-              <td>
-                <div class="progress-bar">
-                  <div class="progress"
-                       th:style="'width: ' + ${#numbers.formatPercent((resultRatio.value.getUserPoint()/resultRatio.value.getStandardPoint()),1,1)}"></div>
-                </div>
-              </td>
-              <td th:text="${#numbers.formatPercent((resultRatio.value.getUserPoint()/resultRatio.value.getStandardPoint()),1,1) }"></td>
-            </tr>
+              <tr th:each="resultRatio : ${userResultRatio}">
+                <td>
+                  <span th:text="${resultRatio.getKey().getTypeMessage()}"></span>
+                    <span style="cursor: pointer; color: blue; text-decoration: underline; font-size: 12px; padding: 5px 10px"
+                          th:onclick="openModal([[${resultRatio.getKey().getTypeMessage()}]])">
+                    상세보기
+                    </span>
+                </td>
+                <td th:text="${resultRatio.value.getUserPoint()}"></td>
+                <td th:text="${resultRatio.value.getStandardPoint()}"></td>
+                <td>
+                  <div class="progress-bar">
+                    <div class="progress"
+                         th:style="'width: ' + ${#numbers.formatPercent((resultRatio.value.getUserPoint()/resultRatio.value.getStandardPoint()),1,1)}"></div>
+                  </div>
+                </td>
+                <td th:text="${#numbers.formatPercent((resultRatio.value.getUserPoint()/resultRatio.value.getStandardPoint()),1,1) }"></td>
+              </tr>
             </tbody>
           </table>
         </div>

@@ -2,15 +2,20 @@ package com.example.gimmegonghakauth.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.example.gimmegonghakauth.constant.AbeekTypeConst;
-import com.example.gimmegonghakauth.constant.CourseCategoryConst;
-import com.example.gimmegonghakauth.domain.CompletedCoursesDomain;
-import com.example.gimmegonghakauth.domain.MajorsDomain;
-import com.example.gimmegonghakauth.domain.UserDomain;
-import com.example.gimmegonghakauth.dto.GonghakCoursesByMajorDto;
-import com.example.gimmegonghakauth.dto.GonghakStandardDto;
-import com.example.gimmegonghakauth.dto.IncompletedCoursesDto;
-import com.example.gimmegonghakauth.service.recommend.MajorName;
+import com.example.gimmegonghakauth.common.infrastructure.CoursesDao;
+import com.example.gimmegonghakauth.common.infrastructure.MajorsDao;
+import com.example.gimmegonghakauth.completed.domain.CompletedCoursesDomain;
+import com.example.gimmegonghakauth.completed.infrastructure.CompletedCoursesDao;
+import com.example.gimmegonghakauth.common.constant.AbeekTypeConst;
+import com.example.gimmegonghakauth.common.constant.CourseCategoryConst;
+import com.example.gimmegonghakauth.common.domain.MajorsDomain;
+import com.example.gimmegonghakauth.status.domain.MajorName;
+import com.example.gimmegonghakauth.status.infrastructure.GonghakRepository;
+import com.example.gimmegonghakauth.status.service.dto.CourseDetailsDto;
+import com.example.gimmegonghakauth.status.service.dto.GonghakStandardDto;
+import com.example.gimmegonghakauth.status.service.dto.IncompletedCoursesDto;
+import com.example.gimmegonghakauth.user.domain.UserDomain;
+import com.example.gimmegonghakauth.user.infrastructure.UserRepository;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,7 +46,7 @@ class GonghakRepositoryTest {
     @Autowired
     private CompletedCoursesDao completedCoursesDao;
     @Autowired
-    private UserDao userDao;
+    private UserRepository userRepository;
     @Autowired
     private CoursesDao coursesDao;
 
@@ -59,31 +64,31 @@ class GonghakRepositoryTest {
     void setMajor() {
         COM_TEST_MAJORDOMAIN = majorsDao.findByMajor(MajorName.COMPUTER.getName());
         WRONG_TEST_MAJORDOMAIN = MajorsDomain.builder()
-            .id(5L)
-            .major("오징어먹물학과").build();
+                .id(5L)
+                .major("오징어먹물학과").build();
     }
 
     void setUserAndCompletedCourse() {
         UserDomain user = UserDomain.builder().studentId(19111111L)
-            .password("qwer").email("test@sju.com")
-            .majorsDomain(majorsDao.findByMajor("컴퓨터공학과"))
-            .name("testUser")
-            .build();
-        userDao.save(user);
+                .password("qwer").email("test@sju.com")
+                .majorsDomain(majorsDao.findByMajor("컴퓨터공학과"))
+                .name("testUser")
+                .build();
+        userRepository.save(user);
 
         CompletedCoursesDomain course1 = CompletedCoursesDomain.builder()
-            .coursesDomain(coursesDao.findByName("Capstone디자인(산학협력프로젝트)"))
-            .year(19)
-            .userDomain(user)
-            .semester("1학기")
-            .build();
+                .coursesDomain(coursesDao.findByName("Capstone디자인(산학협력프로젝트)"))
+                .year(19)
+                .userDomain(user)
+                .semester("1학기")
+                .build();
 
         CompletedCoursesDomain course2 = CompletedCoursesDomain.builder()
-            .coursesDomain(coursesDao.findByName("웹프로그래밍"))
-            .year(19)
-            .userDomain(user)
-            .semester("1학기")
-            .build();
+                .coursesDomain(coursesDao.findByName("웹프로그래밍"))
+                .year(19)
+                .userDomain(user)
+                .semester("1학기")
+                .build();
 
         completedCoursesDao.save(course1);
         completedCoursesDao.save(course2);
@@ -95,23 +100,23 @@ class GonghakRepositoryTest {
     @DisplayName("dao 메서드 상태 출력")
     void displayDaoMethod() {
         List<IncompletedCoursesDto> withoutCompleteCourses = gonghakRepository.findUserIncompletedCourses(
-            CourseCategoryConst.전공, COM_TEST_STUDENT_ID, COM_TEST_MAJORDOMAIN
+                CourseCategoryConst.전공, COM_TEST_STUDENT_ID, COM_TEST_MAJORDOMAIN
         );
 
         withoutCompleteCourses.forEach(
-            incompletedCoursesDto -> {
-                log.info("withoutCompleteCourses = {}:", incompletedCoursesDto.getCourseName());
-            }
+                incompletedCoursesDto -> {
+                    log.info("withoutCompleteCourses = {}:", incompletedCoursesDto.getCourseName());
+                }
         );
 
-        List<GonghakCoursesByMajorDto> withCompletedCourses = gonghakRepository.findUserCompletedCourses(
-            COM_TEST_STUDENT_ID, COM_TEST_MAJORDOMAIN
+        List<CourseDetailsDto> withCompletedCourses = gonghakRepository.findUserCompletedCourses(
+                COM_TEST_STUDENT_ID, COM_TEST_MAJORDOMAIN
         );
 
         withCompletedCourses.forEach(
-            gonghakCoursesByMajorDto -> {
-                log.info("withCompletedCourses = {}", gonghakCoursesByMajorDto.getCourseName());
-            }
+                gonghakCoursesByMajorDto -> {
+                    log.info("withCompletedCourses = {}", gonghakCoursesByMajorDto.getCourseName());
+                }
         );
     }
 
@@ -120,12 +125,12 @@ class GonghakRepositoryTest {
     @DisplayName("GonghakStandardDto 5가지 상태 모두 포함되어있는지 확인")
     void findStandardKeySetTest() {
         Optional<GonghakStandardDto> standard = gonghakRepository.findStandard(
-            COM_TEST_MAJORDOMAIN);
+                COM_TEST_MAJORDOMAIN);
         log.info("testStandard status ={}", standard.get().getStandards());
         Map<AbeekTypeConst, Integer> testStandard = standard.get().getStandards();
         assertThat(testStandard.keySet()).contains(AbeekTypeConst.BSM,
-            AbeekTypeConst.PROFESSIONAL_NON_MAJOR, AbeekTypeConst.DESIGN, AbeekTypeConst.MAJOR,
-            AbeekTypeConst.MINIMUM_CERTI);
+                AbeekTypeConst.PROFESSIONAL_NON_MAJOR, AbeekTypeConst.DESIGN, AbeekTypeConst.MAJOR,
+                AbeekTypeConst.MINIMUM_CERTI);
         assertThat(testStandard.containsKey(AbeekTypeConst.MSC)).isEqualTo(false);
     }
 
@@ -133,20 +138,20 @@ class GonghakRepositoryTest {
     @Test
     @DisplayName("findUserCoursesByMajorByGonghakCoursesWithCompletedCourses 테스트 ")
     void findUserCoursesByMajorByGonghakCoursesWithCompletedCoursesTest() {
-        List<GonghakCoursesByMajorDto> userDataForCalculate = gonghakRepository.findUserCompletedCourses(
-            COM_TEST_STUDENT_ID, COM_TEST_MAJORDOMAIN);
+        List<CourseDetailsDto> userDataForCalculate = gonghakRepository.findUserCompletedCourses(
+                COM_TEST_STUDENT_ID, COM_TEST_MAJORDOMAIN);
 
         log.info("userDataForCalculate size = {}", userDataForCalculate.size());
-        for (GonghakCoursesByMajorDto course : userDataForCalculate) {
+        for (CourseDetailsDto course : userDataForCalculate) {
             log.info(
-                "Course ID: {}, Course Name: {}, Year: {}, Course Category: {}, Pass Category: {}, Design Credit: {}, Credit: {}",
-                course.getCourseId(),
-                course.getCourseName(),
-                course.getYear(),
-                course.getCourseCategory(),
-                course.getPassCategory(),
-                course.getDesignCredit(),
-                course.getCredit());
+                    "Course ID: {}, Course Name: {}, Year: {}, Course Category: {}, Pass Category: {}, Design Credit: {}, Credit: {}",
+                    course.getCourseId(),
+                    course.getCourseName(),
+                    course.getYear(),
+                    course.getCourseCategory(),
+                    course.getPassCategory(),
+                    course.getDesignCredit(),
+                    course.getCredit());
         }
 
         List<String> passCategories = new ArrayList<>();
@@ -159,7 +164,7 @@ class GonghakRepositoryTest {
         assertThat(passCategories).containsAll(List.of("인필", "인선"));
 
         assertThat(courseCategories).containsAnyElementsOf(
-            List.of(CourseCategoryConst.전문교양, CourseCategoryConst.전공, CourseCategoryConst.BSM));
+                List.of(CourseCategoryConst.전문교양, CourseCategoryConst.전공, CourseCategoryConst.BSM));
     }
 
     @Test
@@ -167,20 +172,20 @@ class GonghakRepositoryTest {
     void findUserCoursesByMajorByGonghakCoursesWithoutCompleteCoursesTest() {
 
         Arrays.stream(CourseCategoryConst.values()).forEach(
-            courseCategory -> {
-                List<IncompletedCoursesDto> testCourses = gonghakRepository.findUserIncompletedCourses(
-                    CourseCategoryConst.전공,
-                    COM_TEST_STUDENT_ID,
-                    COM_TEST_MAJORDOMAIN
-                );
+                courseCategory -> {
+                    List<IncompletedCoursesDto> testCourses = gonghakRepository.findUserIncompletedCourses(
+                            CourseCategoryConst.전공,
+                            COM_TEST_STUDENT_ID,
+                            COM_TEST_MAJORDOMAIN
+                    );
 
-                testCourses.forEach(
-                    incompletedCoursesDto -> {
-                        assertThat(incompletedCoursesDto.getCourseCategory()).isEqualTo(
-                            CourseCategoryConst.전공);
-                    }
-                );
-            }
+                    testCourses.forEach(
+                            incompletedCoursesDto -> {
+                                assertThat(incompletedCoursesDto.getCourseCategory()).isEqualTo(
+                                        CourseCategoryConst.전공);
+                            }
+                    );
+                }
         );
     }
 
@@ -188,7 +193,7 @@ class GonghakRepositoryTest {
     @DisplayName("findStandard가 없을 때 - Wrong Major")
     void findStandardWrongMajorDomainTest() {
         Optional<GonghakStandardDto> wrongStandard = gonghakRepository.findStandard(
-            WRONG_TEST_MAJORDOMAIN);
+                WRONG_TEST_MAJORDOMAIN);
         assertThat(wrongStandard.get().getStandards().isEmpty()).isEqualTo(true);
     }
 }

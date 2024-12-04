@@ -3,13 +3,15 @@ package com.example.gimmegonghakauth.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.example.gimmegonghakauth.constant.AbeekTypeConst;
-import com.example.gimmegonghakauth.dao.AbeekDao;
-import com.example.gimmegonghakauth.dao.GonghakCoursesDao;
-import com.example.gimmegonghakauth.dao.GonghakDao;
-import com.example.gimmegonghakauth.dao.GonghakRepository;
-import com.example.gimmegonghakauth.dao.MajorsDao;
+import com.example.gimmegonghakauth.common.domain.MajorsDomain;
+import com.example.gimmegonghakauth.common.constant.AbeekTypeConst;
+import com.example.gimmegonghakauth.common.infrastructure.MajorsDao;
 import com.example.gimmegonghakauth.domain.DomainTest.DomainTestConfig;
+import com.example.gimmegonghakauth.status.domain.AbeekDomain;
+import com.example.gimmegonghakauth.status.infrastructure.AbeekDao;
+import com.example.gimmegonghakauth.status.infrastructure.GonghakCoursesDao;
+import com.example.gimmegonghakauth.status.infrastructure.GonghakDao;
+import com.example.gimmegonghakauth.status.infrastructure.GonghakRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,28 +44,28 @@ public class DomainTest {
         private final GonghakCoursesDao gonghakCoursesDao;
 
         @Bean
-        public GonghakRepository gonghakRepository(){
+        public GonghakRepository gonghakRepository() {
             return new GonghakDao(abeekDao, gonghakCoursesDao);
         }
     }
 
     private final MajorsDomain majorsDomain = MajorsDomain.builder()
-        .id(1L)
-        .major("건설환경공학과").build();
+            .id(1L)
+            .major("건설환경공학과").build();
 
     @Transactional
     @BeforeEach
-    void beforeEachInputTestData(){
+    void beforeEachInputTestData() {
 
         MajorsDomain majorsDomain = MajorsDomain.builder()
-            .id(1L)
-            .major("건설환경공학과").build();
+                .id(1L)
+                .major("건설환경공학과").build();
         majorsDao.save(majorsDomain);
     }
 
     @Transactional
     @Test
-    void normalSaveTest(){
+    void normalSaveTest() {
 
         //given
         AbeekDomain normalAbeekDomain = buildAbeekDomain(majorsDomain);
@@ -80,21 +82,21 @@ public class DomainTest {
 
     @Test
     @DisplayName("범위 밖의 학년")
-    void outOfRangeYear(){
+    void outOfRangeYear() {
         AbeekDomain errorAbeekDomain = buildAbeekDomain(majorsDomain);
         errorAbeekDomain.setYear(25);
 
         assertThatThrownBy(() -> gonghakRepository.save(errorAbeekDomain))
-            .isInstanceOf(RuntimeException.class);
+                .isInstanceOf(RuntimeException.class);
     }
 
-    private AbeekDomain buildAbeekDomain(MajorsDomain majorsDomain){
+    private AbeekDomain buildAbeekDomain(MajorsDomain majorsDomain) {
         return AbeekDomain.builder()
-            .id(1L)
-            .majorsDomain(majorsDomain)
-            .year(19)
-            .abeekType(AbeekTypeConst.MAJOR)
-            .minCredit(20)
-            .note("이것은 테스트 abeek 도메인 입니다.").build();
+                .id(1L)
+                .majorsDomain(majorsDomain)
+                .year(19)
+                .abeekType(AbeekTypeConst.MAJOR)
+                .minCredit(20)
+                .note("이것은 테스트 abeek 도메인 입니다.").build();
     }
 }
