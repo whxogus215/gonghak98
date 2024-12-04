@@ -87,8 +87,7 @@ public class InitFileData {
         }
     }
     
-    //TODO 이 메서드는 어떠한 용도로 사용되는 것이며, 지워도 되는 것인지 확인하기
-    // raw file 입력 용
+    // raw file 입력 용 : 학과 추가 시에 사용될 가능성이 있어서 현재는 유지하기로 결정
     private Optional<GonghakCoursesDomain> mapToGonghakCoursesDomain(String[] data) {
 
         CoursesDomain courseDomain = coursesDao.findByNameIgnoreSpaces(data[6].replaceAll("\\s+", ""));
