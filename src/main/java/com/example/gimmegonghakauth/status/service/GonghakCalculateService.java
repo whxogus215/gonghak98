@@ -132,6 +132,11 @@ public class GonghakCalculateService {
             return;
         }
 
+        if (userAbeekCredit.containsKey(AbeekTypeConst.NON_MAJOR)
+            && abeekTypeConst == AbeekTypeConst.PROFESSIONAL_NON_MAJOR) {
+            abeekTypeConst = AbeekTypeConst.NON_MAJOR;
+        }
+
         AbeekDetailsDto currentDetails = userAbeekCredit.get(abeekTypeConst);
         if (currentDetails != null) {
             List<CourseDetailsDto> updatedCourses = currentDetails.getCoursesDetails();
