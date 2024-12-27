@@ -41,7 +41,7 @@ class UserServiceTest {
 
     @Test
     void create로_유저를_생성할_수_있다() {
-        //givne, when
+        //given, when
         UserDomain user = userService.create(String.valueOf(id), password, email, null, name);
 
         //then
