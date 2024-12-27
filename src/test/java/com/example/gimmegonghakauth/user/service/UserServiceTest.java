@@ -8,6 +8,7 @@ import com.example.gimmegonghakauth.user.service.dto.ChangePasswordDto;
 import com.example.gimmegonghakauth.user.service.dto.UserJoinDto;
 import com.example.gimmegonghakauth.user.service.exception.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
@@ -40,7 +41,8 @@ class UserServiceTest {
     }
 
     @Test
-    void create로_유저를_생성할_수_있다() {
+    @DisplayName("유저 생성 테스트")
+    void createUserTest() {
         //given, when
         UserDomain user = userService.create(String.valueOf(id), password, email, null, name);
 
@@ -50,7 +52,8 @@ class UserServiceTest {
 
     @Test
     @Tag("setupRequired")
-    void updatePassword로_유저의_비밀번호를_변경할_수_있다() {
+    @DisplayName("비밀번호 변경 테스트")
+    void updatePasswordTest() {
         //given
         String newPassword = "test123";
 
@@ -63,7 +66,8 @@ class UserServiceTest {
 
     @Test
     @Tag("setupRequired")
-    void 사용자의_학번으로_User를_가져올_수_있다() {
+    @DisplayName("학번으로 유저 찾기 테스트")
+    void getByStudentIdTest() {
         //when
         UserDomain findUser = userService.getByStudentId(id);
 
@@ -75,7 +79,8 @@ class UserServiceTest {
 
     @Test
     @Tag("setupRequired")
-    void 사용자의_학번으로_User를_찾지_못하면_예외가_발생한다() {
+    @DisplayName("존재하지 않는 사용자를 찾을때 예외 발생 테스트")
+    void getByStudentIdUserNotFoundExceptionTest() {
         //given
         Long wrongId = 10000000L;
 
@@ -86,7 +91,8 @@ class UserServiceTest {
 
     @Test
     @Tag("setupRequired")
-    void withdrawal로_유저를_삭제할_수_있다() {
+    @DisplayName("회원 탈퇴 테스트")
+    void withdrawalTest() {
         // when
         boolean result = userService.withdrawal(String.valueOf(id), password);
 
@@ -96,7 +102,8 @@ class UserServiceTest {
 
     @Test
     @Tag("setupRequired")
-    void withdrawal_비밀번호가_틀리면_삭제되지_않는다() {
+    @DisplayName("회원 탈퇴 시 비밀번호 불일치 테스트")
+    void withdrawalInvalidPasswordTest() {
         // when
         boolean result = userService.withdrawal(String.valueOf(id), "wrong_password");
 
@@ -105,7 +112,8 @@ class UserServiceTest {
     }
 
     @Test
-    void joinValidation_가입검증_성공() {
+    @DisplayName("회원가입 시 검증 성공 테스트")
+    void joinValidationSuccessTest() {
         // given
         UserJoinDto joinDto = new UserJoinDto(String.valueOf(id), password, password, email, null,
             null, name);
@@ -121,7 +129,8 @@ class UserServiceTest {
     }
 
     @Test
-    void joinValidation_비밀번호가_일치하지_않으면_가입검증_실패() {
+    @DisplayName("회원가입 시 비밀번호 불일치 테스트")
+    void joinValidationInvalidPasswordTest() {
         // given
         String password2 = "wrong_password";
         UserJoinDto joinDto = new UserJoinDto(String.valueOf(id), password, password2, email, null,
@@ -139,7 +148,8 @@ class UserServiceTest {
 
     @Test
     @Tag("setupRequired")
-    void joinValidation_학번이_중복되면_가입검증_실패() {
+    @DisplayName("회원가입 시 학번 중복 테스트")
+    void joinValidationDuplicateIdTest() {
         // given
         String email = "test@naver.com";
         UserJoinDto joinDto = new UserJoinDto(String.valueOf(id), password, password, email, null,
@@ -157,7 +167,8 @@ class UserServiceTest {
 
     @Test
     @Tag("setupRequired")
-    void joinValidation_이메일이_중복되면_가입검증_실패() {
+    @DisplayName("회원가입 시 이메일 중복 테스트")
+    void joinValidationDuplicateEmailTest() {
         // given
         Long id = 10000000L;
         UserJoinDto joinDto = new UserJoinDto(String.valueOf(id), password, password, email, null,
@@ -175,7 +186,8 @@ class UserServiceTest {
 
     @Test
     @Tag("setupRequired")
-    void changePasswordValidation_성공() {
+    @DisplayName("비밀번호 변경 성공 테스트")
+    void changePasswordSuccessTest() {
         // given
         ChangePasswordDto changePasswordDto = new ChangePasswordDto(password, "new_password",
             "new_password");
@@ -192,7 +204,8 @@ class UserServiceTest {
 
     @Test
     @Tag("setupRequired")
-    void changePasswordValidation_현재_패스워드가_틀리면_실패() {
+    @DisplayName("비밀번호 변경 시 현재 패스워드 불일치 테스트")
+    void changePasswordInvalidPasswordTest() {
         // given
         ChangePasswordDto changePasswordDto = new ChangePasswordDto("wrong_password",
             "new_password", "new_password");
@@ -210,7 +223,8 @@ class UserServiceTest {
 
     @Test
     @Tag("setupRequired")
-    void changePasswordValidation_새_패스워드가_일치하지_않으면_실패() {
+    @DisplayName("비밀번호 변경시 새 패스워드 불일치 테스트")
+    void changePasswordInvalidNewPasswordTest() {
         // given
         ChangePasswordDto changePasswordDto = new ChangePasswordDto(password, "new_password",
             "mismatch_password");
