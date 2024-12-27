@@ -90,7 +90,7 @@ public class UserService {
     public boolean withdrawal(String _studentId, String password) {
         Long studentId = Long.parseLong(_studentId);
 
-        UserDomain user = findUserByStudentId(studentId);
+        UserDomain user = getByStudentId(studentId);
 
         if (!isPasswordValid(user, password)) {
             return false;
@@ -100,11 +100,6 @@ public class UserService {
         deleteUser(user);
 
         return true;
-    }
-
-    private UserDomain findUserByStudentId(Long studentId) {
-        return userRepository.findByStudentId(studentId)
-            .orElseThrow(() -> new UsernameNotFoundException("학번이 존재하지 않습니다."));
     }
 
     private boolean isPasswordValid(UserDomain user, String password) {
