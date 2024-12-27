@@ -25,9 +25,9 @@ public class UserService {
     private final CompletedCoursesDao completedCoursesDao;
     private final UserEncoder userEncoder;
 
-    public UserDomain create(String _studentId, String password, String email,
+    public UserDomain create(String id, String password, String email,
         MajorsDomain majorsDomain, String name) {
-        Long studentId = Long.parseLong(_studentId);
+        Long studentId = Long.parseLong(id);
         UserDomain user = UserDomain.builder()
             .studentId(studentId).password(userEncoder.encode(password))
             .email(email).majorsDomain(majorsDomain).name(name)
