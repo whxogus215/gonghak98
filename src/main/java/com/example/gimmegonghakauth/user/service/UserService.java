@@ -51,15 +51,12 @@ public class UserService {
         if (isPasswordMismatch(userJoinDto, bindingResult)) {
             return false;
         }
-
         if (isStudentIdDuplicate(userJoinDto.getStudentId(), bindingResult)) {
             return false;
         }
-
         if (isEmailDuplicate(userJoinDto.getEmail(), bindingResult)) {
             return false;
         }
-
         return true;
     }
 
