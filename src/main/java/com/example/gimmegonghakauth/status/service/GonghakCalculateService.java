@@ -89,8 +89,6 @@ public class GonghakCalculateService {
                 return AbeekTypeConst.MAJOR;
             case "전문교양":
                 return AbeekTypeConst.PROFESSIONAL_NON_MAJOR;
-            case "교양":
-                return AbeekTypeConst.NON_MAJOR;
             case "MSC":
                 return AbeekTypeConst.MSC;
             case "BSM":
@@ -103,8 +101,15 @@ public class GonghakCalculateService {
 
     private void stackCredit(AbeekTypeConst abeekTypeConst, CourseDetailsDto courseDetailsDto,
         Map<AbeekTypeConst, AbeekDetailsDto> userResult) {
+
+        if (userResult.containsKey(AbeekTypeConst.NON_MAJOR)
+            && abeekTypeConst == AbeekTypeConst.PROFESSIONAL_NON_MAJOR) {
+            abeekTypeConst = AbeekTypeConst.NON_MAJOR;
+        }
+
         double inputCredit = getInputCredit(abeekTypeConst, courseDetailsDto);
         AbeekDetailsDto currentDetails = userResult.get(abeekTypeConst);
+
         if (currentDetails != null) {
             ResultPointDto currentResultPoint = currentDetails.getResultPoint();
             double newUserPoint = currentResultPoint.getUserPoint() + inputCredit;
@@ -125,6 +130,11 @@ public class GonghakCalculateService {
         Map<AbeekTypeConst, AbeekDetailsDto> userAbeekCredit) {
         if (getInputCredit(abeekTypeConst, courseDetailsDto) == 0) {
             return;
+        }
+
+        if (userAbeekCredit.containsKey(AbeekTypeConst.NON_MAJOR)
+            && abeekTypeConst == AbeekTypeConst.PROFESSIONAL_NON_MAJOR) {
+            abeekTypeConst = AbeekTypeConst.NON_MAJOR;
         }
 
         AbeekDetailsDto currentDetails = userAbeekCredit.get(abeekTypeConst);
