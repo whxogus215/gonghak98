@@ -44,15 +44,15 @@ public class StatusController {
         // 컨트롤러가 UserDomain 객체를 가져오는 역할을 수행하고 있음.
         UserDomain student = userRepository.findByStudentId(studentId).get();
 
-        readUserResult(model, student);
+        readUserResult(model, studentId);
         readUserRecommendCourses(model, studentId, student);
         return "gonghak/statusForm";
     }
 
     // 사용자의 인증 현황 데이터를 가져온다.
-    private void readUserResult(Model model, UserDomain student) {
+    private void readUserResult(Model model, Long studentId) {
         GonghakResultDto userResultRatio = myAbeekService.getResult(
-                student.getStudentId())
+                studentId)
             .orElseThrow(IllegalArgumentException::new);
         addResultPoint(model, userResultRatio);
         addCoursesDetails(model, userResultRatio);
