@@ -16,6 +16,21 @@ public enum AbeekTypeConst {
         this.typeMessage = typeMessage;
     }
 
+    public static AbeekTypeConst getCourseCategoryType(String courseCategory) {
+        switch (courseCategory) {
+            case "전공":
+                return AbeekTypeConst.MAJOR;
+            case "전문교양":
+                return AbeekTypeConst.PROFESSIONAL_NON_MAJOR;
+            case "MSC":
+                return AbeekTypeConst.MSC;
+            case "BSM":
+                return AbeekTypeConst.BSM;
+            default:
+                return null;
+        }
+    }
+
     public String getTypeMessage() {
         return typeMessage;
     }

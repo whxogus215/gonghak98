@@ -32,14 +32,12 @@ public class Abeek {
         return Optional.of(new GonghakResultDto(userResult));
     }
 
-    private Map<AbeekTypeConst, AbeekDetailsDto> getUserAbeekCreditDefault(
-        Map<AbeekTypeConst, Integer> standards) {
+    private Map<AbeekTypeConst, AbeekDetailsDto> getUserAbeekCreditDefault(Map<AbeekTypeConst, Integer> standards) {
         Map<AbeekTypeConst, AbeekDetailsDto> userAbeekCredit = new ConcurrentHashMap<>();
         Arrays.stream(AbeekTypeConst.values()).forEach(abeekTypeConst -> {
             if (standards.containsKey(abeekTypeConst)) {
                 ResultPointDto resultPoint = new ResultPointDto(0.0, standards.get(abeekTypeConst));
-                AbeekDetailsDto abeekDetailsDto = new AbeekDetailsDto(resultPoint,
-                    new ArrayList<>());
+                AbeekDetailsDto abeekDetailsDto = new AbeekDetailsDto(resultPoint, new ArrayList<>());
                 userAbeekCredit.put(abeekTypeConst, abeekDetailsDto);
             }
         });
@@ -50,7 +48,7 @@ public class Abeek {
     private void stackUserGonghakCredit(List<CourseDetailsDto> userCoursesByMajor,
         Map<AbeekTypeConst, AbeekDetailsDto> userResult) {
         userCoursesByMajor.forEach(courseDetailsDto -> {
-            AbeekTypeConst typeConst = getCourseCategoryType(
+            AbeekTypeConst typeConst = AbeekTypeConst.getCourseCategoryType(
                 String.valueOf(courseDetailsDto.getCourseCategory()));
             if (typeConst != null) {
                 stackCredit(typeConst, courseDetailsDto, userResult);
@@ -61,21 +59,6 @@ public class Abeek {
             stackCredit(AbeekTypeConst.MINIMUM_CERTI, courseDetailsDto, userResult);
             addCourseToDetails(AbeekTypeConst.MINIMUM_CERTI, courseDetailsDto, userResult);
         });
-    }
-
-    private AbeekTypeConst getCourseCategoryType(String courseCategory) {
-        switch (courseCategory) {
-            case "전공":
-                return AbeekTypeConst.MAJOR;
-            case "전문교양":
-                return AbeekTypeConst.PROFESSIONAL_NON_MAJOR;
-            case "MSC":
-                return AbeekTypeConst.MSC;
-            case "BSM":
-                return AbeekTypeConst.BSM;
-            default:
-                return null;
-        }
     }
 
     private void stackCredit(AbeekTypeConst abeekTypeConst, CourseDetailsDto courseDetailsDto,
@@ -97,14 +80,13 @@ public class Abeek {
         }
     }
 
-    private double getInputCredit(AbeekTypeConst abeekTypeConst,
-        CourseDetailsDto courseDetailsDto) {
+    private double getInputCredit(AbeekTypeConst abeekTypeConst, CourseDetailsDto courseDetailsDto) {
         return (abeekTypeConst == AbeekTypeConst.DESIGN) ? courseDetailsDto.getDesignCredit()
             : (double) courseDetailsDto.getCredit();
     }
 
-    private void addCourseToDetails(AbeekTypeConst abeekTypeConst,
-        CourseDetailsDto courseDetailsDto, Map<AbeekTypeConst, AbeekDetailsDto> userAbeekCredit) {
+    private void addCourseToDetails(AbeekTypeConst abeekTypeConst, CourseDetailsDto courseDetailsDto,
+        Map<AbeekTypeConst, AbeekDetailsDto> userAbeekCredit) {
         if (getInputCredit(abeekTypeConst, courseDetailsDto) == 0) {
             return;
         }
