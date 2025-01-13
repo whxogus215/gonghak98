@@ -23,12 +23,10 @@ public class Abeek {
 
     public Optional<GonghakResultDto> getResult(List<CourseDetailsDto> userCompletedCourses) {
         // default user abeek 학점 상태 map
-        Map<AbeekTypeConst, AbeekDetailsDto> userResult = getUserAbeekCreditDefault(
-            standards);
+        Map<AbeekTypeConst, AbeekDetailsDto> userResult = getUserAbeekCreditDefault(standards);
 
         // stackUserGonghakCredit -> abeekType에 맞게 이수한 총 학점을 계산한다.
-        stackUserGonghakCredit(userCompletedCourses,
-            userResult);
+        stackUserGonghakCredit(userCompletedCourses, userResult);
 
         // 인증 상태(비율) return
         return Optional.of(new GonghakResultDto(userResult));
@@ -106,8 +104,7 @@ public class Abeek {
     }
 
     private void addCourseToDetails(AbeekTypeConst abeekTypeConst,
-        CourseDetailsDto courseDetailsDto,
-        Map<AbeekTypeConst, AbeekDetailsDto> userAbeekCredit) {
+        CourseDetailsDto courseDetailsDto, Map<AbeekTypeConst, AbeekDetailsDto> userAbeekCredit) {
         if (getInputCredit(abeekTypeConst, courseDetailsDto) == 0) {
             return;
         }
