@@ -4,5 +4,5 @@ import com.example.gimmegonghakauth.status.service.dto.GonghakRecommendCoursesDt
 import com.example.gimmegonghakauth.user.domain.UserDomain;
 
 public interface GonghakRecommendService {
-    GonghakRecommendCoursesDto createRecommendCourses(UserDomain userDomain);
+    GonghakRecommendCoursesDto createRecommendCourses(Long studentId);
 }

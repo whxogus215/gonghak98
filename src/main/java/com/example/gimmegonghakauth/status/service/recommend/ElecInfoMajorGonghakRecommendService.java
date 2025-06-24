@@ -7,6 +7,7 @@ import com.example.gimmegonghakauth.status.service.dto.GonghakRecommendCoursesDt
 import com.example.gimmegonghakauth.status.service.dto.GonghakStandardDto;
 import com.example.gimmegonghakauth.status.service.dto.IncompletedCoursesDto;
 import com.example.gimmegonghakauth.user.domain.UserDomain;
+import com.example.gimmegonghakauth.user.infrastructure.UserRepository;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,28 +22,30 @@ import org.springframework.transaction.annotation.Transactional;
 public class ElecInfoMajorGonghakRecommendService implements GonghakRecommendService {
 
     private final GonghakRepository gonghakRepository;
+    private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
     @Override
-    public GonghakRecommendCoursesDto createRecommendCourses(UserDomain userDomain) {
+    public GonghakRecommendCoursesDto createRecommendCourses(Long studentId) {
+        UserDomain user = userRepository.findByStudentId(studentId).orElseThrow();
         GonghakRecommendCoursesDto gonghakRecommendCoursesDto = new GonghakRecommendCoursesDto();
 
         // findStandard -> 학번 입학년도를 기준으로 해당 년도의 abeekType(영역별 구분),minCredit(영역별 인증학점) 불러온다.
-        Optional<GonghakStandardDto> standard = gonghakRepository.findStandard(userDomain.getMajorsDomain());
+        Optional<GonghakStandardDto> standard = gonghakRepository.findStandard(user.getMajorsDomain());
 
         // 수강하지 않은 과목 중 "전문 교양" 과목을 반환한다.
         List<IncompletedCoursesDto> professionalNonMajor = gonghakRepository.findUserIncompletedCourses(
-                CourseCategoryConst.전문교양, userDomain.getStudentId(), userDomain.getMajorsDomain()
+                CourseCategoryConst.전문교양, user.getStudentId(), user.getMajorsDomain()
         );
 
         // 수강하지 않은 과목 중 "전공" 과목을 반환한다.
         List<IncompletedCoursesDto> major = gonghakRepository.findUserIncompletedCourses(
-                CourseCategoryConst.전공, userDomain.getStudentId(), userDomain.getMajorsDomain()
+                CourseCategoryConst.전공, user.getStudentId(), user.getMajorsDomain()
         );
 
         // 수강하지 않은 과목 중 "MSC" 과목을 반환한다.
         List<IncompletedCoursesDto> msc = gonghakRepository.findUserIncompletedCourses(
-                CourseCategoryConst.MSC, userDomain.getStudentId(), userDomain.getMajorsDomain()
+                CourseCategoryConst.MSC, user.getStudentId(), user.getMajorsDomain()
         );
 
         // abeekType 별 추천 과목 List를 반환한다.

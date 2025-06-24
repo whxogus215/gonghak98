@@ -46,12 +46,10 @@ class GonghakRecommendServiceTest {
 
     @Test
     void createRecommendCoursesTest() {
-        UserDomain testUser = userRepository.findByStudentId(COM_TEST_STUDENT_ID).get();
-
         GonghakRecommendService comGonghakRecommendService = recommendServiceSelectManager.selectRecommendService(
                 new LoginDto(COM_TEST_STUDENT_ID).getStudentId());
         Map<AbeekTypeConst, List<IncompletedCoursesDto>> recommendCoursesByAbeekType = comGonghakRecommendService.createRecommendCourses(
-                testUser).getRecommendCoursesByAbeekType();
+                COM_TEST_STUDENT_ID).getRecommendCoursesByAbeekType();
 
         log.info("recommendCoursesByAbeekType.keySet()= {}", recommendCoursesByAbeekType.keySet());
         //[PROFESSIONAL_NON_MAJOR, BSM, DESIGN, MAJOR, MINIMUM_CERTI]
