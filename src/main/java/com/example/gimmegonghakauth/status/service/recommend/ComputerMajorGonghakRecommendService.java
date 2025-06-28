@@ -8,7 +8,6 @@ import com.example.gimmegonghakauth.status.service.dto.GonghakRecommendCoursesDt
 import com.example.gimmegonghakauth.status.service.dto.GonghakStandardDto;
 import com.example.gimmegonghakauth.status.service.dto.IncompletedCoursesDto;
 import com.example.gimmegonghakauth.user.domain.UserDomain;
-import com.example.gimmegonghakauth.user.infrastructure.UserRepository;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,12 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class ComputerMajorGonghakRecommendService implements GonghakRecommendService {
 
     private final GonghakRepository gonghakRepository;
-    private final UserRepository userRepository;
 
     @Override
     @Transactional(readOnly = true)
-    public GonghakRecommendCoursesDto createRecommendCourses(Long studentId) {
-        UserDomain user = userRepository.findByStudentId(studentId).orElseThrow();
+    public GonghakRecommendCoursesDto createRecommendCourses(UserDomain user) {
         GonghakRecommendCoursesDto gonghakRecommendCoursesDto = new GonghakRecommendCoursesDto();
 
         // findStandard -> 학번 입학년도를 기준으로 해당 년도의 abeekType(영역별 구분),minCredit(영역별 인증학점) 불러온다.
@@ -36,52 +33,52 @@ public class ComputerMajorGonghakRecommendService implements GonghakRecommendSer
 
         // 수강하지 않은 과목 중 "전문 교양" 과목을 반환한다.
         List<IncompletedCoursesDto> professionalNonMajor = gonghakRepository.findUserIncompletedCourses(
-                CourseCategoryConst.전문교양, user.getStudentId(), user.getMajorsDomain()
+            CourseCategoryConst.전문교양, user.getStudentId(), user.getMajorsDomain()
         );
 
         // 수강하지 않은 과목 중 "전공" 과목을 반환한다.
         List<IncompletedCoursesDto> major = gonghakRepository.findUserIncompletedCourses(
-                CourseCategoryConst.전공, user.getStudentId(), user.getMajorsDomain()
+            CourseCategoryConst.전공, user.getStudentId(), user.getMajorsDomain()
         );
 
         // 수강하지 않은 과목 중 "BSM" 과목을 반환한다.
         List<IncompletedCoursesDto> bsm = gonghakRepository.findUserIncompletedCourses(
-                CourseCategoryConst.BSM, user.getStudentId(), user.getMajorsDomain()
+            CourseCategoryConst.BSM, user.getStudentId(), user.getMajorsDomain()
         );
 
         // abeekType 별 추천 과목 List를 반환한다.
         Map<AbeekTypeConst, List<IncompletedCoursesDto>> coursesByAbeekTypeWithoutCompleteCourses = gonghakRecommendCoursesDto.getRecommendCoursesByAbeekType();
         Arrays.stream(AbeekTypeConst.values()).forEach(
-                abeekType -> {
-                    List<IncompletedCoursesDto> abeekRecommend = new ArrayList<>();
-                    if (standard.get().getStandards().containsKey(abeekType)) {
-                        switch (abeekType) {
-                            case BSM:
-                                abeekRecommend.addAll(bsm);
-                                break;
-                            case MAJOR:
-                                abeekRecommend.addAll(major);
-                                break;
-                            case DESIGN:
-                                addOnlyDesignCreditOverZero(major, abeekRecommend);
-                                break;
-                            case PROFESSIONAL_NON_MAJOR:
-                                abeekRecommend.addAll(professionalNonMajor);
-                                break;
-                            case NON_MAJOR:
-                                abeekRecommend.addAll(professionalNonMajor);
-                                break;
-                            case MINIMUM_CERTI:
-                                abeekRecommend.addAll(bsm);
-                                abeekRecommend.addAll(professionalNonMajor);
-                                abeekRecommend.addAll(major);
-                                break;
-                        }
-                        coursesByAbeekTypeWithoutCompleteCourses.put(abeekType, abeekRecommend);
+            abeekType -> {
+                List<IncompletedCoursesDto> abeekRecommend = new ArrayList<>();
+                if (standard.get().getStandards().containsKey(abeekType)) {
+                    switch (abeekType) {
+                        case BSM:
+                            abeekRecommend.addAll(bsm);
+                            break;
+                        case MAJOR:
+                            abeekRecommend.addAll(major);
+                            break;
+                        case DESIGN:
+                            addOnlyDesignCreditOverZero(major, abeekRecommend);
+                            break;
+                        case PROFESSIONAL_NON_MAJOR:
+                            abeekRecommend.addAll(professionalNonMajor);
+                            break;
+                        case NON_MAJOR:
+                            abeekRecommend.addAll(professionalNonMajor);
+                            break;
+                        case MINIMUM_CERTI:
+                            abeekRecommend.addAll(bsm);
+                            abeekRecommend.addAll(professionalNonMajor);
+                            abeekRecommend.addAll(major);
+                            break;
                     }
-
-
+                    coursesByAbeekTypeWithoutCompleteCourses.put(abeekType, abeekRecommend);
                 }
+
+
+            }
         );
 
         return gonghakRecommendCoursesDto;
@@ -91,11 +88,11 @@ public class ComputerMajorGonghakRecommendService implements GonghakRecommendSer
     private static void addOnlyDesignCreditOverZero(List<IncompletedCoursesDto> majorBasic,
                                                     List<IncompletedCoursesDto> abeekRecommend) {
         majorBasic.forEach(
-                incompletedCoursesDto -> {
-                    if (incompletedCoursesDto.getDesignCredit() > 0) {
-                        abeekRecommend.add(incompletedCoursesDto);
-                    }
+            incompletedCoursesDto -> {
+                if (incompletedCoursesDto.getDesignCredit() > 0) {
+                    abeekRecommend.add(incompletedCoursesDto);
                 }
+            }
         );
     }
 

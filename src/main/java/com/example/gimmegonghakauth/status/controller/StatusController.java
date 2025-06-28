@@ -4,8 +4,9 @@ import com.example.gimmegonghakauth.common.constant.AbeekTypeConst;
 import com.example.gimmegonghakauth.status.service.MyAbeekService;
 import com.example.gimmegonghakauth.status.service.dto.AbeekDetailsDto;
 import com.example.gimmegonghakauth.status.service.dto.CourseDetailsDto;
+import com.example.gimmegonghakauth.status.service.dto.GonghakRecommendCoursesDto;
 import com.example.gimmegonghakauth.status.service.dto.GonghakResultDto;
-import com.example.gimmegonghakauth.status.service.dto.IncompletedCoursesDto;
+import com.example.gimmegonghakauth.status.service.dto.MyAbeekResponse;
 import com.example.gimmegonghakauth.status.service.dto.ResultPointDto;
 import java.util.List;
 import java.util.Map;
@@ -33,17 +34,11 @@ public class StatusController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         Long studentId = Long.parseLong(userDetails.getUsername());
 
-        log.info("사용자 인증현황=====================");
-        GonghakResultDto userResultRatio = myAbeekService.getResult(studentId)
-                                                         .orElseThrow(IllegalArgumentException::new);
-        addResultPoint(model, userResultRatio);
-        addCoursesDetails(model, userResultRatio);
-        log.info("사용자 인증현황=====================");
+        MyAbeekResponse response = myAbeekService.getUserResult(studentId);
 
-        log.info("사용자 추천과목=====================");
-        Map<AbeekTypeConst, List<IncompletedCoursesDto>> recommendCoursesByAbeekType = myAbeekService.getRecommendResult(studentId);
-        model.addAttribute("recommendCoursesByAbeekType", recommendCoursesByAbeekType);
-        log.info("사용자 추천과목=====================");
+        addResultPoint(model, response.gonghakResultDto());
+        addCoursesDetails(model, response.gonghakResultDto());
+        addRecommendCourses(model, response.recommendCourses());
 
         return "gonghak/statusForm";
     }
@@ -63,5 +58,9 @@ public class StatusController {
         userResult.forEach((abeekTypeConst, abeekDetailsDto) -> coursesDetails.put(abeekTypeConst, abeekDetailsDto.getCoursesDetails()));
 
         model.addAttribute("userCourseDetails", coursesDetails);
+    }
+
+    private void addRecommendCourses(Model model, GonghakRecommendCoursesDto gonghakRecommendCoursesDto) {
+        model.addAttribute("recommendCoursesByAbeekType", gonghakRecommendCoursesDto.getRecommendCoursesByAbeekType());
     }
 }
