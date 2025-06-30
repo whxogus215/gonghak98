@@ -14,14 +14,18 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface GonghakCoursesDao extends JpaRepository<GonghakCoursesDomain,Long> {
 
-    @Query("select new com.example.gimmegonghakauth.status.service.dto.CourseDetailsDto(GCD.coursesDomain.courseId, GCD.coursesDomain.name, CCD.year, CCD.semester, GCD.courseCategory, GCD.passCategory, GCD.designCredit, GCD.coursesDomain.credit) from GonghakCoursesDomain GCD "
+    @Query("select new com.example.gimmegonghakauth.status.service.dto.CourseDetailsDto(GCD.coursesDomain.courseId, GCD.coursesDomain.name, CCD.year, CCD.semester, GCD.courseCategory, GCD.passCategory, GCD.designCredit, GCD.coursesDomain.credit) "
+        + "from GonghakCoursesDomain GCD "
         + "join CompletedCoursesDomain CCD on GCD.coursesDomain = CCD.coursesDomain "
         + "where CCD.userDomain.studentId =:studentId and GCD.majorsDomain.id = :majorsId and GCD.year = :year")
     List<CourseDetailsDto> findUserCompletedCourses(@Param("studentId") Long studentId, @Param("majorsId") Long majorId, @Param("year") Long year);
 
-    @Query("select new com.example.gimmegonghakauth.status.service.dto.IncompletedCoursesDto(GCD.coursesDomain.name, GCD.courseCategory, GCD.coursesDomain.credit, GCD.designCredit) from GonghakCoursesDomain GCD  "
+    @Query("select new com.example.gimmegonghakauth.status.service.dto.IncompletedCoursesDto(GCD.coursesDomain.name, GCD.courseCategory, GCD.coursesDomain.credit, GCD.designCredit) "
+        + "from GonghakCoursesDomain GCD "
         + "left join CompletedCoursesDomain CCD on CCD.coursesDomain = GCD.coursesDomain "
-        + "where GCD.majorsDomain = :majorsDomain and GCD.year = :year and GCD.courseCategory = :courseCategory and CCD.id is null and :studentId is not null")
-    List<IncompletedCoursesDto> findUserIncompletedCourses(@Param("courseCategory") CourseCategoryConst courseCategory, @Param("studentId") Long studentId, @Param("majorsDomain") MajorsDomain majorsDomain, @Param("year") Long year);
+        + "where GCD.majorsDomain = :majorsDomain and GCD.year = :year "
+        + "and CCD.id is null and :studentId is not null "
+        + "and GCD.courseCategory in :courseCategories")
+    List<IncompletedCoursesDto> findUserIncompletedCourses(@Param("courseCategories") List<CourseCategoryConst> courseCategories, @Param("studentId") Long studentId, @Param("majorsDomain") MajorsDomain majorsDomain, @Param("year") Long year);
 
 }

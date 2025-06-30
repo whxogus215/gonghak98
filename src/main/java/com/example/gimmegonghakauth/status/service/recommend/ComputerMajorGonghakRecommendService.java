@@ -1,6 +1,10 @@
 package com.example.gimmegonghakauth.status.service.recommend;
 
 
+import static com.example.gimmegonghakauth.common.constant.CourseCategoryConst.BSM;
+import static com.example.gimmegonghakauth.common.constant.CourseCategoryConst.전공;
+import static com.example.gimmegonghakauth.common.constant.CourseCategoryConst.전문교양;
+
 import com.example.gimmegonghakauth.common.constant.AbeekTypeConst;
 import com.example.gimmegonghakauth.common.constant.CourseCategoryConst;
 import com.example.gimmegonghakauth.status.infrastructure.GonghakRepository;
@@ -10,6 +14,7 @@ import com.example.gimmegonghakauth.status.service.dto.IncompletedCoursesDto;
 import com.example.gimmegonghakauth.user.domain.UserDomain;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -25,71 +30,49 @@ public class ComputerMajorGonghakRecommendService implements GonghakRecommendSer
     @Override
     @Transactional(readOnly = true)
     public GonghakRecommendCoursesDto createRecommendCourses(UserDomain user, GonghakStandardDto standard) {
-        GonghakRecommendCoursesDto gonghakRecommendCoursesDto = new GonghakRecommendCoursesDto();
+        List<CourseCategoryConst> courseCategories = Arrays.asList(전문교양, 전공, BSM);
+        List<IncompletedCoursesDto> userIncompletedCourses = gonghakRepository.findUserIncompletedCourses(courseCategories,
+                                                                                                          user.getStudentId(),
+                                                                                                          user.getMajorsDomain());
 
-        // 수강하지 않은 과목 중 "전문 교양" 과목을 반환한다.
-        List<IncompletedCoursesDto> professionalNonMajor = gonghakRepository.findUserIncompletedCourses(
-            CourseCategoryConst.전문교양, user.getStudentId(), user.getMajorsDomain()
+        Map<AbeekTypeConst, List<IncompletedCoursesDto>> recommendCourses = new EnumMap<>(AbeekTypeConst.class);
+        standard.getStandards().keySet().forEach(
+            abeekType -> recommendCourses.put(abeekType, new ArrayList<>())
         );
 
-        // 수강하지 않은 과목 중 "전공" 과목을 반환한다.
-        List<IncompletedCoursesDto> major = gonghakRepository.findUserIncompletedCourses(
-            CourseCategoryConst.전공, user.getStudentId(), user.getMajorsDomain()
-        );
+        List<IncompletedCoursesDto> professionalNonMajor = userIncompletedCourses.stream()
+                                                                                 .filter(course -> course.getCourseCategory() == 전문교양)
+                                                                                 .toList();
+        List<IncompletedCoursesDto> major = userIncompletedCourses.stream()
+                                                                  .filter(course -> course.getCourseCategory() == 전공)
+                                                                  .toList();
+        List<IncompletedCoursesDto> bsm = userIncompletedCourses.stream()
+                                                                .filter(course -> course.getCourseCategory() == BSM)
+                                                                .toList();
 
-        // 수강하지 않은 과목 중 "BSM" 과목을 반환한다.
-        List<IncompletedCoursesDto> bsm = gonghakRepository.findUserIncompletedCourses(
-            CourseCategoryConst.BSM, user.getStudentId(), user.getMajorsDomain()
-        );
-
-        // abeekType 별 추천 과목 List를 반환한다.
-        Map<AbeekTypeConst, List<IncompletedCoursesDto>> coursesByAbeekTypeWithoutCompleteCourses = gonghakRecommendCoursesDto.getRecommendCoursesByAbeekType();
-        Arrays.stream(AbeekTypeConst.values()).forEach(
+        standard.getStandards().keySet().forEach(
             abeekType -> {
-                List<IncompletedCoursesDto> abeekRecommend = new ArrayList<>();
-                if (standard.getStandards().containsKey(abeekType)) {
-                    switch (abeekType) {
-                        case BSM:
-                            abeekRecommend.addAll(bsm);
-                            break;
-                        case MAJOR:
-                            abeekRecommend.addAll(major);
-                            break;
-                        case DESIGN:
-                            addOnlyDesignCreditOverZero(major, abeekRecommend);
-                            break;
-                        case PROFESSIONAL_NON_MAJOR:
-                            abeekRecommend.addAll(professionalNonMajor);
-                            break;
-                        case NON_MAJOR:
-                            abeekRecommend.addAll(professionalNonMajor);
-                            break;
-                        case MINIMUM_CERTI:
-                            abeekRecommend.addAll(bsm);
-                            abeekRecommend.addAll(professionalNonMajor);
-                            abeekRecommend.addAll(major);
-                            break;
+                switch (abeekType) {
+                    case BSM -> recommendCourses.get(abeekType).addAll(bsm);
+                    case MAJOR -> recommendCourses.get(abeekType).addAll(major);
+                    case PROFESSIONAL_NON_MAJOR, NON_MAJOR -> recommendCourses.get(abeekType).addAll(professionalNonMajor);
+                    case MINIMUM_CERTI -> {
+                        recommendCourses.get(abeekType).addAll(bsm);
+                        recommendCourses.get(abeekType).addAll(major);
+                        recommendCourses.get(abeekType).addAll(professionalNonMajor);
                     }
-                    coursesByAbeekTypeWithoutCompleteCourses.put(abeekType, abeekRecommend);
-                }
-
-
-            }
-        );
-
-        return gonghakRecommendCoursesDto;
-    }
-
-    // 설계 과목(designCredit > 0)인 경우만 추가한다.
-    private static void addOnlyDesignCreditOverZero(List<IncompletedCoursesDto> majorBasic,
-                                                    List<IncompletedCoursesDto> abeekRecommend) {
-        majorBasic.forEach(
-            incompletedCoursesDto -> {
-                if (incompletedCoursesDto.getDesignCredit() > 0) {
-                    abeekRecommend.add(incompletedCoursesDto);
+                    case DESIGN -> {
+                        List<IncompletedCoursesDto> incompletedCourses = recommendCourses.get(abeekType);
+                        major.stream()
+                             .filter(course -> course.getDesignCredit() > 0)
+                             .forEach(incompletedCourses::add);
+                    }
+                    default -> {
+                    }
                 }
             }
         );
-    }
 
+        return new GonghakRecommendCoursesDto(recommendCourses);
+    }
 }

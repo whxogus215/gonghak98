@@ -64,7 +64,7 @@ class GonghakRecommendServiceTest {
         GonghakStandardDto standard = abeekService.findLatestStandardByMajor(testMajor)
                                                   .orElseThrow(() -> new IllegalArgumentException("최신 표준을 찾을 수 없습니다."));
         Map<AbeekTypeConst, List<IncompletedCoursesDto>> recommendCoursesByAbeekType = comGonghakRecommendService.createRecommendCourses(testUser, standard)
-                                                                                                                 .getRecommendCoursesByAbeekType();
+                                                                                                                 .recommendCourses();
 
         log.info("recommendCoursesByAbeekType.keySet()= {}", recommendCoursesByAbeekType.keySet());
         //[PROFESSIONAL_NON_MAJOR, BSM, DESIGN, MAJOR, MINIMUM_CERTI]

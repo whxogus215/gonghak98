@@ -61,6 +61,6 @@ public class StatusController {
     }
 
     private void addRecommendCourses(Model model, GonghakRecommendCoursesDto gonghakRecommendCoursesDto) {
-        model.addAttribute("recommendCoursesByAbeekType", gonghakRecommendCoursesDto.getRecommendCoursesByAbeekType());
+        model.addAttribute("recommendCoursesByAbeekType", gonghakRecommendCoursesDto.recommendCourses());
     }
 }

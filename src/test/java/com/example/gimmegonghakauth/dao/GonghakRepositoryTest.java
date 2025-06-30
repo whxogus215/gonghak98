@@ -100,7 +100,7 @@ class GonghakRepositoryTest {
     @DisplayName("dao 메서드 상태 출력")
     void displayDaoMethod() {
         List<IncompletedCoursesDto> withoutCompleteCourses = gonghakRepository.findUserIncompletedCourses(
-                CourseCategoryConst.전공, COM_TEST_STUDENT_ID, COM_TEST_MAJORDOMAIN
+                List.of(CourseCategoryConst.전공), COM_TEST_STUDENT_ID, COM_TEST_MAJORDOMAIN
         );
 
         withoutCompleteCourses.forEach(
@@ -174,7 +174,7 @@ class GonghakRepositoryTest {
         Arrays.stream(CourseCategoryConst.values()).forEach(
                 courseCategory -> {
                     List<IncompletedCoursesDto> testCourses = gonghakRepository.findUserIncompletedCourses(
-                            CourseCategoryConst.전공,
+                            List.of(CourseCategoryConst.전공),
                             COM_TEST_STUDENT_ID,
                             COM_TEST_MAJORDOMAIN
                     );
