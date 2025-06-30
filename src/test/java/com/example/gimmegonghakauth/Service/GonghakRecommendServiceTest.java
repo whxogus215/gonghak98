@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.example.gimmegonghakauth.common.constant.AbeekTypeConst;
 import com.example.gimmegonghakauth.common.domain.MajorsDomain;
+import com.example.gimmegonghakauth.status.service.AbeekService;
+import com.example.gimmegonghakauth.status.service.dto.GonghakStandardDto;
 import com.example.gimmegonghakauth.status.service.dto.IncompletedCoursesDto;
 import com.example.gimmegonghakauth.status.service.recommend.ComputerMajorGonghakRecommendService;
 import com.example.gimmegonghakauth.status.service.recommend.GonghakRecommendService;
@@ -38,6 +40,9 @@ class GonghakRecommendServiceTest {
     @Autowired
     private RecommendServiceSelectManager recommendServiceSelectManager;
 
+    @Autowired
+    private AbeekService abeekService;
+
     @BeforeEach
     void setUp() {
         testUser = userRepository.findByStudentId(TEST_ID)
@@ -46,16 +51,19 @@ class GonghakRecommendServiceTest {
     }
 
     @Test
-    @DisplayName("유저의 학과에 맞는 recommendService 클래스 가져오기 확인 - 컴퓨터공학과")
+    @DisplayName("유저의 학과(컴퓨터 공학과)에 맞는 추천 서비스 객체 조회 확인")
     void recommendServiceSelectManagerTest() {
         GonghakRecommendService gonghakRecommendService = recommendServiceSelectManager.selectRecommendService(testMajor);
         assertThat(gonghakRecommendService).isInstanceOf(ComputerMajorGonghakRecommendService.class);
     }
 
     @Test
+    @DisplayName("사용자의 추천 과목 조회 테스트")
     void createRecommendCoursesTest() {
         GonghakRecommendService comGonghakRecommendService = recommendServiceSelectManager.selectRecommendService(testMajor);
-        Map<AbeekTypeConst, List<IncompletedCoursesDto>> recommendCoursesByAbeekType = comGonghakRecommendService.createRecommendCourses(testUser)
+        GonghakStandardDto standard = abeekService.findLatestStandardByMajor(testMajor)
+                                                  .orElseThrow(() -> new IllegalArgumentException("최신 표준을 찾을 수 없습니다."));
+        Map<AbeekTypeConst, List<IncompletedCoursesDto>> recommendCoursesByAbeekType = comGonghakRecommendService.createRecommendCourses(testUser, standard)
                                                                                                                  .getRecommendCoursesByAbeekType();
 
         log.info("recommendCoursesByAbeekType.keySet()= {}", recommendCoursesByAbeekType.keySet());

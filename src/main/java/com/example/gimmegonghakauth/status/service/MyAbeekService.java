@@ -34,16 +34,16 @@ public class MyAbeekService {
 
         // 사용자 인증현황 조회
         log.info("사용자 인증현황=====================");
-        GonghakStandardDto gonghakStandardDto = abeekService.findStandard(major).get();
+        GonghakStandardDto gonghakStandard = abeekService.findLatestStandardByMajor(major).orElseThrow(IllegalArgumentException::new);
         List<CourseDetailsDto> completedCourse = gonghakCoursesService.findUserCompletedCourses(studentId, major);
-        Abeek abeek = new Abeek(gonghakStandardDto);
+        Abeek abeek = new Abeek(gonghakStandard);
         GonghakResultDto gonghakResultDto = abeek.getResult(completedCourse).orElseThrow(IllegalArgumentException::new);
         log.info("사용자 인증현황=====================");
 
         // 사용자 인증현황에 따른 추천 과목 조회
         log.info("사용자 추천과목=====================");
         GonghakRecommendService gonghakRecommendService = recommendServiceSelectManager.selectRecommendService(major);
-        GonghakRecommendCoursesDto recommendCourses = gonghakRecommendService.createRecommendCourses(user);
+        GonghakRecommendCoursesDto recommendCourses = gonghakRecommendService.createRecommendCourses(user, gonghakStandard);
         log.info("사용자 추천과목=====================");
 
         return new MyAbeekResponse(gonghakResultDto, recommendCourses);

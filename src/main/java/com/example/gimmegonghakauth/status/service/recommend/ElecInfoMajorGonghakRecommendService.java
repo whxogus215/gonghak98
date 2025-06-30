@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,11 +23,8 @@ public class ElecInfoMajorGonghakRecommendService implements GonghakRecommendSer
 
     @Transactional(readOnly = true)
     @Override
-    public GonghakRecommendCoursesDto createRecommendCourses(UserDomain user) {
+    public GonghakRecommendCoursesDto createRecommendCourses(UserDomain user, GonghakStandardDto standard) {
         GonghakRecommendCoursesDto gonghakRecommendCoursesDto = new GonghakRecommendCoursesDto();
-
-        // findStandard -> 학번 입학년도를 기준으로 해당 년도의 abeekType(영역별 구분),minCredit(영역별 인증학점) 불러온다.
-        Optional<GonghakStandardDto> standard = gonghakRepository.findStandard(user.getMajorsDomain());
 
         // 수강하지 않은 과목 중 "전문 교양" 과목을 반환한다.
         List<IncompletedCoursesDto> professionalNonMajor = gonghakRepository.findUserIncompletedCourses(
@@ -50,7 +46,7 @@ public class ElecInfoMajorGonghakRecommendService implements GonghakRecommendSer
         Arrays.stream(AbeekTypeConst.values()).forEach(
             abeekType -> {
                 List<IncompletedCoursesDto> abeekRecommend = new ArrayList<>();
-                if (standard.get().getStandards().containsKey(abeekType)) {
+                if (standard.getStandards().containsKey(abeekType)) {
                     switch (abeekType) {
                         case MSC:
                             abeekRecommend.addAll(msc);
