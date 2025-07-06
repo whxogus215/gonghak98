@@ -1,0 +1,24 @@
+### 1. 로그인 페이지 접속 (CSRF 토큰 획득)
+# 이 GET 요청을 통해 서버는 `XSRF-TOKEN` 쿠키를 응답으로 보냅니다.
+# 인텔리제이 HTTP Client는 이 쿠키를 자동으로 저장하고 다음 요청에 사용합니다.
+GET http://localhost:8080/user/login
+Accept: text/html
+
+> {%
+    var htmlContent = response.body;
+    var csrfInputMatch = htmlContent.match(/<input type="hidden" name="_csrf" value="([^"]+)"\s*\/?>/);
+    var csrfTokenFromHtml = null;
+    if (csrfInputMatch && csrfInputMatch[1]) {
+        csrfTokenFromHtml = csrfInputMatch[1];
+    }
+    client.global.set('csrfToken', csrfTokenFromHtml);
+ %}
+
+### 2. 로그인 요청 (POST)
+POST http://localhost:8080/user/login
+Content-Type: application/x-www-form-urlencoded
+
+_csrf={{csrfToken}}&username=18000000&password=qwer
+
+### 3. 인증현황 및 추천과목 리소스 GET 요청
+GET http://localhost:8080/gonghak/status
