@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Component
-@Profile("!(prod || release)")
+@Profile("!(prod || release || performance)")
 @Slf4j
 public class InitFileData {
 

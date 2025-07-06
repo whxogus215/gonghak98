@@ -7,22 +7,27 @@ services:
     ports:
       - "3306:3306"
     environment:
-      - MYSQL_ROOT_PASSWORD=7663200
+      - MYSQL_ROOT_PASSWORD=1234
       - MYSQL_DATABASE=gonghak98
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "--password=7663200" ]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "--password=1234" ]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 30s  # 컨테이너 시작 후 30초 동안은 실패를 무시
     restart: always
+    deploy: # 서버 스펙은 RDS 프리티어 db.t3.micro를 기준으로 설정
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
     networks:
       - gonghak98
   was:
     container_name: was
     build:
       context: .
-      dockerfile: docker/Dockerfile_Was
+      dockerfile: docker/Dockerfile_Was_Performance
     ports:
       - "8080:8080"
     environment:
@@ -30,6 +35,11 @@ services:
     depends_on:
       db:
         condition: service_healthy  # MySQL의 health check가 성공할 때까지 대기
+    deploy: # 서버 스펙은 AWS 프리티어 t2.micro를 기준으로 설정
+      resources:
+        limits:
+          cpus: '1'    # CPU 1코어로 제한
+          memory: 1G   # 전체 메모리 1GB로 제한
     networks:
       - gonghak98
   nginx:
@@ -55,6 +65,8 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
       - gonghak98
+    depends_on:
+      - mysqld_exporter
     deploy:
       resources:
         limits:
@@ -72,11 +84,34 @@ services:
       - grafana_data:/var/lib/grafana
     networks:
       - gonghak98
+    depends_on:
+      - prometheus
     deploy:
       resources:
         limits:
           cpus: '0.5'
           memory: 512M
+  # MySQL 모니터링을 위한 Prometheus Exporter
+  mysqld_exporter:
+    image: prom/mysqld-exporter:latest
+    container_name: mysqld_exporter
+    environment:
+      - DATA_SOURCE_NAME=root:1234@tcp(db:3306)/
+    ports:
+      - "9104:9104"
+    depends_on:
+      db:
+        condition: service_healthy  # MySQL의 health check가 성공할 때까지 대기
+    deploy:
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: 64M
+    command:
+      - "--mysqld.username=root:1234"
+      - "--mysqld.address=db:3306"
+    networks:
+      - gonghak98
 
 volumes:
   grafana_data:

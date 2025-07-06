@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
-@Profile("!(prod || release)")
+@Profile("!(prod || release || performance)")
 public class InitData {
 
     private final MajorsDao majorsDao;
@@ -213,7 +213,7 @@ public class InitData {
         UserDomain user1 = UserDomain.builder()
                 .email("testEmail1@sju.ac.kr")
                 .name("조태현")
-                .password(passwordEncoder.encode("qwer"))
+                .password(passwordEncoder.encode("q"))
                 .studentId(admin1)
                 .majorsDomain(elecInfoMajor).build();
         userRepository.save(user1);

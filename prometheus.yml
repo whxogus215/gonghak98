@@ -7,3 +7,6 @@ scrape_configs:
     metrics_path: '/actuator/prometheus'
     static_configs:
       - targets: ['was:8080']
+  - job_name: 'mysql'
+    static_configs:
+      - targets: ['mysqld_exporter:9104']
