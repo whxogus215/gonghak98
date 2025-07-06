@@ -28,10 +28,12 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+    testRuntimeOnly 'com.h2database:h2'
+
     implementation 'com.github.in-seo:univcert:master-SNAPSHOT'
 
-    testImplementation 'junit:junit:4.13.1'
-    testImplementation 'junit:junit:4.13.1'
     testImplementation 'junit:junit:4.13.1'
 
     implementation group: 'org.apache.poi', name: 'poi', version: '5.0.0'

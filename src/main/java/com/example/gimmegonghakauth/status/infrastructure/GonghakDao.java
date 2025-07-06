@@ -48,9 +48,10 @@ public class GonghakDao implements GonghakRepository{
 
     // gonghakCourse 중 이수하지 않은 과목을 불러온다.
     @Override
-    public List<IncompletedCoursesDto> findUserIncompletedCourses(
-        CourseCategoryConst courseCategory, Long studentId, MajorsDomain majorsDomain) {
-        return gonghakCoursesDao.findUserIncompletedCourses(courseCategory, studentId, majorsDomain, studentId/DIVIDER);
+    public List<IncompletedCoursesDto> findUserIncompletedCourses(List<CourseCategoryConst> courseCategories,
+                                                                  Long studentId,
+                                                                  MajorsDomain majorsDomain) {
+        return gonghakCoursesDao.findUserIncompletedCourses(courseCategories, studentId, majorsDomain, studentId/DIVIDER);
     }
 
     private Optional<GonghakStandardDto> changeToGonghakStandardDto(MajorsDomain majorsDomain, int year) {
