@@ -94,33 +94,6 @@ class GonghakRepositoryTest {
         completedCoursesDao.save(course2);
     }
 
-
-    //출력
-    @Test
-    @DisplayName("dao 메서드 상태 출력")
-    void displayDaoMethod() {
-        List<IncompletedCoursesDto> withoutCompleteCourses = gonghakRepository.findUserIncompletedCourses(
-                List.of(CourseCategoryConst.전공), COM_TEST_STUDENT_ID, COM_TEST_MAJORDOMAIN
-        );
-
-        withoutCompleteCourses.forEach(
-                incompletedCoursesDto -> {
-                    log.info("withoutCompleteCourses = {}:", incompletedCoursesDto.getCourseName());
-                }
-        );
-
-        List<CourseDetailsDto> withCompletedCourses = gonghakRepository.findUserCompletedCourses(
-                COM_TEST_STUDENT_ID, COM_TEST_MAJORDOMAIN
-        );
-
-        withCompletedCourses.forEach(
-                gonghakCoursesByMajorDto -> {
-                    log.info("withCompletedCourses = {}", gonghakCoursesByMajorDto.getCourseName());
-                }
-        );
-    }
-
-    //GonghakStandardDto 상태 확인
     @Test
     @DisplayName("GonghakStandardDto 5가지 상태 모두 포함되어있는지 확인")
     void findStandardKeySetTest() {
@@ -133,7 +106,6 @@ class GonghakRepositoryTest {
                 AbeekTypeConst.MINIMUM_CERTI);
         assertThat(testStandard.containsKey(AbeekTypeConst.MSC)).isEqualTo(false);
     }
-
 
     @Test
     @DisplayName("findUserCoursesByMajorByGonghakCoursesWithCompletedCourses 테스트 ")

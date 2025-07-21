@@ -1,12 +1,10 @@
-package com.example.gimmegonghakauth.Service;
+package com.example.gimmegonghakauth.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.example.gimmegonghakauth.Service.GonghakCalculateServiceTest.CalculateTestConfig;
+import com.example.gimmegonghakauth.service.GonghakCalculateServiceTest.CalculateTestConfig;
 import com.example.gimmegonghakauth.common.constant.AbeekTypeConst;
-import com.example.gimmegonghakauth.common.domain.CoursesDomain;
 import com.example.gimmegonghakauth.common.domain.MajorsDomain;
-import com.example.gimmegonghakauth.completed.domain.CompletedCoursesDomain;
 import com.example.gimmegonghakauth.status.infrastructure.AbeekDao;
 import com.example.gimmegonghakauth.status.infrastructure.GonghakCoursesDao;
 import com.example.gimmegonghakauth.status.infrastructure.GonghakDao;
@@ -14,7 +12,6 @@ import com.example.gimmegonghakauth.status.infrastructure.GonghakRepository;
 import com.example.gimmegonghakauth.status.service.GonghakCalculateService;
 import com.example.gimmegonghakauth.status.service.dto.AbeekDetailsDto;
 import com.example.gimmegonghakauth.status.service.dto.CourseDetailsDto;
-import com.example.gimmegonghakauth.status.service.dto.ResultPointDto;
 import com.example.gimmegonghakauth.user.domain.UserDomain;
 import java.util.List;
 import java.util.Map;
