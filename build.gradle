@@ -30,7 +30,7 @@ dependencies {
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
-    testRuntimeOnly 'com.h2database:h2'
+    runtimeOnly 'com.h2database:h2'
 
     implementation 'com.github.in-seo:univcert:master-SNAPSHOT'
 

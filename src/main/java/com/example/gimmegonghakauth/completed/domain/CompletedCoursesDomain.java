@@ -40,8 +40,8 @@ public class CompletedCoursesDomain {
     private CoursesDomain coursesDomain;
 
     @NotNull
-    @Range(min = 17,max = 24)
-    @Column(name = "year")
+    @Range(min = 17, max = 25)
+    @Column(name = "\"year\"")
     private int year;
 
     @NotNull

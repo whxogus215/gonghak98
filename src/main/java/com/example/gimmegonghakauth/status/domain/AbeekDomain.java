@@ -39,8 +39,8 @@ public class AbeekDomain {
     private MajorsDomain majorsDomain;
 
     @NotNull
-    @Range(min = 14,max = 24)
-    @Column(name = "year")
+    @Range(min = 14, max = 25)
+    @Column(name = "\"year\"")
     private int year;
 
     @NotNull
