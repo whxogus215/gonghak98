@@ -1,7 +1,7 @@
 package com.example.gimmegonghakauth.status.infrastructure;
 
 import com.example.gimmegonghakauth.common.constant.AbeekTypeConst;
-import com.example.gimmegonghakauth.common.constant.CourseCategoryConst;
+import com.example.gimmegonghakauth.common.constant.CourseCategory;
 import com.example.gimmegonghakauth.status.domain.AbeekDomain;
 import com.example.gimmegonghakauth.common.domain.MajorsDomain;
 import com.example.gimmegonghakauth.status.service.dto.CourseDetailsDto;
@@ -48,7 +48,7 @@ public class GonghakDao implements GonghakRepository{
 
     // gonghakCourse 중 이수하지 않은 과목을 불러온다.
     @Override
-    public List<IncompletedCoursesDto> findUserIncompletedCourses(List<CourseCategoryConst> courseCategories,
+    public List<IncompletedCoursesDto> findUserIncompletedCourses(List<CourseCategory> courseCategories,
                                                                   Long studentId,
                                                                   MajorsDomain majorsDomain) {
         return gonghakCoursesDao.findUserIncompletedCourses(courseCategories, studentId, majorsDomain, studentId/DIVIDER);
@@ -62,10 +62,7 @@ public class GonghakDao implements GonghakRepository{
 
         // abeek을 기반으로 abeekType(영역별 구분),minCredit(영역별 인증학점) 저장한다.
         allByYearAndMajorsDomain.forEach(
-            abeekDomain -> {
-                standards.put(abeekDomain.getAbeekType(),abeekDomain.getMinCredit());
-            }
-        );
+            abeekDomain -> standards.put(abeekDomain.getAbeekType(),abeekDomain.getMinCredit()));
         log.info("standards={}",standards);
 
         return Optional.of(new GonghakStandardDto(standards));

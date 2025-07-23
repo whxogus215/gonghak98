@@ -1,6 +1,6 @@
 package com.example.gimmegonghakauth.status.domain;
 
-import com.example.gimmegonghakauth.common.constant.CourseCategoryConst;
+import com.example.gimmegonghakauth.common.constant.CourseCategory;
 import com.example.gimmegonghakauth.common.domain.CoursesDomain;
 import com.example.gimmegonghakauth.common.domain.MajorsDomain;
 import jakarta.persistence.Column;
@@ -42,14 +42,14 @@ public class GonghakCoursesDomain {
     private CoursesDomain coursesDomain;
 
     @NotNull
-    @Range(min = 15, max = 24)
-    @Column(name = "year")
+    @Range(min = 15, max = 25)
+    @Column(name = "\"year\"")
     private int year;
 
     @NotNull
     @Enumerated(value = EnumType.STRING)
     @Column(name = "course_category_const")
-    private CourseCategoryConst courseCategory;
+    private CourseCategory courseCategory;
 
     @NotNull
     @Column(name = "pass_category")

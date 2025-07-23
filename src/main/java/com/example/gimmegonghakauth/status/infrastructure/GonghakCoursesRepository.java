@@ -1,6 +1,6 @@
 package com.example.gimmegonghakauth.status.infrastructure;
 
-import com.example.gimmegonghakauth.common.constant.CourseCategoryConst;
+import com.example.gimmegonghakauth.common.constant.CourseCategory;
 import com.example.gimmegonghakauth.common.domain.MajorsDomain;
 import com.example.gimmegonghakauth.status.domain.GonghakCoursesDomain;
 import com.example.gimmegonghakauth.status.service.dto.CourseDetailsDto;
@@ -22,7 +22,7 @@ public interface GonghakCoursesRepository extends JpaRepository<GonghakCoursesDo
     @Query("select new com.example.gimmegonghakauth.status.service.dto.IncompletedCoursesDto(GCD.coursesDomain.name, GCD.courseCategory, GCD.coursesDomain.credit, GCD.designCredit) from GonghakCoursesDomain GCD  "
         + "left join CompletedCoursesDomain CCD on CCD.coursesDomain = GCD.coursesDomain "
         + "where GCD.majorsDomain = :majorsDomain and GCD.year = :year and GCD.courseCategory = :courseCategory and CCD.id is null and :studentId is not null")
-    List<IncompletedCoursesDto> findUserIncompletedCourses(@Param("courseCategory") CourseCategoryConst courseCategory, @Param("studentId") Long studentId, @Param("majorsDomain") MajorsDomain majorsDomain, @Param("year") Long year);
+    List<IncompletedCoursesDto> findUserIncompletedCourses(@Param("courseCategory") CourseCategory courseCategory, @Param("studentId") Long studentId, @Param("majorsDomain") MajorsDomain majorsDomain, @Param("year") Long year);
 
 }
 

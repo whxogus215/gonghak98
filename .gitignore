@@ -44,3 +44,4 @@ out/
 ### Ignore Files for Deploy ###
 scripts
 
+*.properties

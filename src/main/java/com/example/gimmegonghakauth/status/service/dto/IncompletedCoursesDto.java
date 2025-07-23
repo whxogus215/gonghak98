@@ -1,6 +1,6 @@
 package com.example.gimmegonghakauth.status.service.dto;
 
-import com.example.gimmegonghakauth.common.constant.CourseCategoryConst;
+import com.example.gimmegonghakauth.common.constant.CourseCategory;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class IncompletedCoursesDto {
     private final String courseName;
-    private final CourseCategoryConst courseCategory;
+    private final CourseCategory courseCategory;
     private final int credit;
     private final double designCredit;
 }

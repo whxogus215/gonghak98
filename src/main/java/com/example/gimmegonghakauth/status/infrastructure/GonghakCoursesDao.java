@@ -1,6 +1,6 @@
 package com.example.gimmegonghakauth.status.infrastructure;
 
-import com.example.gimmegonghakauth.common.constant.CourseCategoryConst;
+import com.example.gimmegonghakauth.common.constant.CourseCategory;
 import com.example.gimmegonghakauth.status.domain.GonghakCoursesDomain;
 import com.example.gimmegonghakauth.common.domain.MajorsDomain;
 import com.example.gimmegonghakauth.status.service.dto.CourseDetailsDto;
@@ -26,6 +26,6 @@ public interface GonghakCoursesDao extends JpaRepository<GonghakCoursesDomain,Lo
         + "where GCD.majorsDomain = :majorsDomain and GCD.year = :year "
         + "and CCD.id is null and :studentId is not null "
         + "and GCD.courseCategory in :courseCategories")
-    List<IncompletedCoursesDto> findUserIncompletedCourses(@Param("courseCategories") List<CourseCategoryConst> courseCategories, @Param("studentId") Long studentId, @Param("majorsDomain") MajorsDomain majorsDomain, @Param("year") Long year);
+    List<IncompletedCoursesDto> findUserIncompletedCourses(@Param("courseCategories") List<CourseCategory> courseCategories, @Param("studentId") Long studentId, @Param("majorsDomain") MajorsDomain majorsDomain, @Param("year") Long year);
 
 }

@@ -1,6 +1,6 @@
 package com.example.gimmegonghakauth.status.service;
 
-import com.example.gimmegonghakauth.common.constant.CourseCategoryConst;
+import com.example.gimmegonghakauth.common.constant.CourseCategory;
 import com.example.gimmegonghakauth.common.domain.MajorsDomain;
 import com.example.gimmegonghakauth.status.infrastructure.GonghakCoursesRepository;
 import com.example.gimmegonghakauth.status.service.dto.CourseDetailsDto;
@@ -25,7 +25,7 @@ public class GonghakCoursesService {
 
     // gonghakCourse 중 이수하지 않은 과목을 불러온다.
     public List<IncompletedCoursesDto> findUserIncompletedCourses(
-        CourseCategoryConst courseCategory, Long studentId, MajorsDomain majorsDomain) {
+        CourseCategory courseCategory, Long studentId, MajorsDomain majorsDomain) {
         return gonghakCoursesRepository.findUserIncompletedCourses(courseCategory, studentId,
             majorsDomain, studentId / DIVIDER);
     }

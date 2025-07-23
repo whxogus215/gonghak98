@@ -1,4 +1,4 @@
-package com.example.gimmegonghakauth.Service;
+package com.example.gimmegonghakauth.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
