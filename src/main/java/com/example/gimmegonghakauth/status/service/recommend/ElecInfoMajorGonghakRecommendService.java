@@ -1,11 +1,11 @@
 package com.example.gimmegonghakauth.status.service.recommend;
 
-import static com.example.gimmegonghakauth.common.constant.CourseCategoryConst.MSC;
-import static com.example.gimmegonghakauth.common.constant.CourseCategoryConst.전공;
-import static com.example.gimmegonghakauth.common.constant.CourseCategoryConst.전문교양;
+import static com.example.gimmegonghakauth.common.constant.CourseCategory.MSC;
+import static com.example.gimmegonghakauth.common.constant.CourseCategory.전공;
+import static com.example.gimmegonghakauth.common.constant.CourseCategory.전문교양;
 
 import com.example.gimmegonghakauth.common.constant.AbeekTypeConst;
-import com.example.gimmegonghakauth.common.constant.CourseCategoryConst;
+import com.example.gimmegonghakauth.common.constant.CourseCategory;
 import com.example.gimmegonghakauth.status.infrastructure.GonghakRepository;
 import com.example.gimmegonghakauth.status.service.dto.GonghakRecommendCoursesDto;
 import com.example.gimmegonghakauth.status.service.dto.GonghakStandardDto;
@@ -29,7 +29,7 @@ public class ElecInfoMajorGonghakRecommendService implements GonghakRecommendSer
     @Transactional(readOnly = true)
     @Override
     public GonghakRecommendCoursesDto createRecommendCourses(UserDomain user, GonghakStandardDto standard) {
-        List<CourseCategoryConst> courseCategories = Arrays.asList(전문교양, 전공, MSC);
+        List<CourseCategory> courseCategories = Arrays.asList(전문교양, 전공, MSC);
         List<IncompletedCoursesDto> userIncompletedCourses = gonghakRepository.findUserIncompletedCourses(courseCategories,
                                                                                                           user.getStudentId(),
                                                                                                           user.getMajorsDomain());
@@ -66,8 +66,7 @@ public class ElecInfoMajorGonghakRecommendService implements GonghakRecommendSer
                              .filter(course -> course.getDesignCredit() > 0)
                              .forEach(incompletedCourses::add);
                     }
-                    default -> {
-                    }
+                    default -> throw new IllegalStateException("올바르지 않은 타입 : " + abeekType);
                 }
             }
         );

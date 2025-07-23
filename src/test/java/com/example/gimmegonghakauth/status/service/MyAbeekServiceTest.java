@@ -9,12 +9,13 @@ import com.example.gimmegonghakauth.common.infrastructure.CoursesDao;
 import com.example.gimmegonghakauth.common.infrastructure.MajorsDao;
 import com.example.gimmegonghakauth.completed.domain.CompletedCoursesDomain;
 import com.example.gimmegonghakauth.completed.infrastructure.CompletedCoursesDao;
+import com.example.gimmegonghakauth.status.service.dto.IncompletedCoursesDto;
 import com.example.gimmegonghakauth.status.service.dto.MyAbeekResponse;
 import com.example.gimmegonghakauth.status.service.dto.ResultPointDto;
 import com.example.gimmegonghakauth.user.domain.UserDomain;
 import com.example.gimmegonghakauth.user.service.UserService;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,12 +63,26 @@ class MyAbeekServiceTest {
         assertThat(userResult.getUserPoint()).isEqualTo(courseCredit);
     }
 
-    @Test
     @DisplayName("전자정보통신공학과 재학생은 인증에 필요한 추천과목을 확인할 수 있다.")
-    void readRecommendCoursesTest() {
+    @ParameterizedTest
+    @CsvSource({
+        "9067, 전문교양, 3.0, 문제해결을위한글쓰기와발표",
+        "1357, MSC, 3.0, 미적분학1",
+        "4268, 전공, 3.0, 데이터구조론"
+    })
+    void readRecommendCoursesTest(Long courseId, String abeekName, Double courseCredit, String courseName) {
         // given
+        AbeekTypeConst findAbeekType = AbeekTypeConst.getCourseCategoryType(abeekName);
+        UserDomain user = createTestUserWithSingleCompletedCourse(courseId);
+
         // when
-        //then
+        MyAbeekResponse result = myAbeekService.getUserResult(user.getStudentId());
+
+        // then
+        List<IncompletedCoursesDto> recommendCourses = result.recommendCourses().recommendCourses().get(findAbeekType);
+        assertThat(recommendCourses)
+            .noneMatch(course -> course.getCourseName().equals(courseName))
+            .allMatch(course -> course.getCourseCategory().name().equals(abeekName));
     }
 
     private UserDomain createTestUserWithSingleCompletedCourse(Long courseId) {
