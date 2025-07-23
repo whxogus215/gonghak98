@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AbeekService {
 
-    private static final int LATEST_YEAR = 24;
+    private static final int LATEST_YEAR = 25;
 
     private final AbeekRepository abeekRepository;
 
