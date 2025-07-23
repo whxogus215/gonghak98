@@ -14,16 +14,15 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface GonghakCoursesRepository extends JpaRepository<GonghakCoursesDomain,Long> {
 
-    @Query("select new com.example.gimmegonghakauth.status.service.dto.CourseDetailsDto(GCD.coursesDomain.courseId, GCD.coursesDomain.name, CCD.year, CCD.semester, GCD.courseCategory, GCD.passCategory, GCD.designCredit, GCD.coursesDomain.credit) from GonghakCoursesDomain GCD "
-        + "join CompletedCoursesDomain CCD on GCD.coursesDomain = CCD.coursesDomain "
+    @Query("select new com.example.gimmegonghakauth.status.service.dto.CourseDetailsDto(GCD.courseDomain.courseId, GCD.courseDomain.name, CCD.year, CCD.semester, GCD.courseCategory, GCD.passCategory, GCD.designCredit, GCD.courseDomain.credit) from GonghakCoursesDomain GCD "
+        + "join CompletedCoursesDomain CCD on GCD.courseDomain = CCD.courseDomain "
         + "where CCD.userDomain.studentId =:studentId and GCD.majorsDomain.id = :majorsId and GCD.year = :year")
     List<CourseDetailsDto> findUserCompletedCourses(@Param("studentId") Long studentId, @Param("majorsId") Long majorId, @Param("year") Long year);
 
-    @Query("select new com.example.gimmegonghakauth.status.service.dto.IncompletedCoursesDto(GCD.coursesDomain.name, GCD.courseCategory, GCD.coursesDomain.credit, GCD.designCredit) from GonghakCoursesDomain GCD  "
-        + "left join CompletedCoursesDomain CCD on CCD.coursesDomain = GCD.coursesDomain "
+    @Query("select new com.example.gimmegonghakauth.status.service.dto.IncompletedCoursesDto(GCD.courseDomain.name, GCD.courseCategory, GCD.courseDomain.credit, GCD.designCredit) from GonghakCoursesDomain GCD  "
+        + "left join CompletedCoursesDomain CCD on CCD.courseDomain = GCD.courseDomain "
         + "where GCD.majorsDomain = :majorsDomain and GCD.year = :year and GCD.courseCategory = :courseCategory and CCD.id is null and :studentId is not null")
     List<IncompletedCoursesDto> findUserIncompletedCourses(@Param("courseCategory") CourseCategory courseCategory, @Param("studentId") Long studentId, @Param("majorsDomain") MajorsDomain majorsDomain, @Param("year") Long year);
-
 }
 
 

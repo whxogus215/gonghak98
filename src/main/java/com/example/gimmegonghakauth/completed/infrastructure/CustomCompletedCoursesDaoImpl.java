@@ -23,7 +23,7 @@ public class CustomCompletedCoursesDaoImpl implements CustomCompletedCoursesDao 
                 @Override
                 public void setValues(PreparedStatement ps, int i) throws SQLException {
                     CompletedCoursesDomain course = completedCourses.get(i);
-                    ps.setLong(1, course.getCoursesDomain().getCourseId());
+                    ps.setLong(1, course.getCourseDomain().getCourseId());
                     ps.setString(2, course.getSemester());
                     ps.setLong(3, course.getUserDomain().getId());
                     ps.setInt(4, course.getYear());

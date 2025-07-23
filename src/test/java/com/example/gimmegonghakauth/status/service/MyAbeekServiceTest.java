@@ -3,7 +3,7 @@ package com.example.gimmegonghakauth.status.service;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.example.gimmegonghakauth.common.constant.AbeekTypeConst;
-import com.example.gimmegonghakauth.common.domain.CoursesDomain;
+import com.example.gimmegonghakauth.common.domain.CourseDomain;
 import com.example.gimmegonghakauth.common.domain.MajorsDomain;
 import com.example.gimmegonghakauth.common.infrastructure.CoursesDao;
 import com.example.gimmegonghakauth.common.infrastructure.MajorsDao;
@@ -100,7 +100,7 @@ class MyAbeekServiceTest {
                                           return majorsDao.save(newMajor);
                                       });
         UserDomain user = userService.create(String.valueOf(studentId), password, email, major, name);
-        CoursesDomain course = coursesDao.findByCourseId(courseId);
+        CourseDomain course = coursesDao.findByCourseId(courseId);
 
         CompletedCoursesDomain completedCourse = CompletedCoursesDomain.builder()
                                                                        .userDomain(user)

@@ -4,12 +4,15 @@ import com.example.gimmegonghakauth.completed.infrastructure.CompletedCoursesDao
 import com.example.gimmegonghakauth.common.infrastructure.CoursesDao;
 import com.example.gimmegonghakauth.user.infrastructure.UserRepository;
 import com.example.gimmegonghakauth.completed.domain.CompletedCoursesDomain;
-import com.example.gimmegonghakauth.common.domain.CoursesDomain;
+import com.example.gimmegonghakauth.common.domain.CourseDomain;
 import com.example.gimmegonghakauth.user.domain.UserDomain;
 import com.example.gimmegonghakauth.completed.service.exception.FileException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -71,28 +74,43 @@ public class CompletedCoursesService {
 
     @Transactional
     public void extractData(Sheet worksheet, DataFormatter dataFormatter, UserDomain userDomain) {
-        List<CompletedCoursesDomain> completedCoursesList = new ArrayList<>();  // 저장할 엔티티 리스트 생성
+
+        List<Long> courseIds = new ArrayList<>();
+        List<Map<String, Object>> rowDatas = new ArrayList<>();
+        String yearKey = "year";
+        String semesterKey = "semesterKey";
+        String courseIdKey = "courseId";
 
         for (int i = FIRST_ROW; i < worksheet.getPhysicalNumberOfRows(); i++) { //데이터 추출
             Row row = worksheet.getRow(i);
 
-            String yearAsString = dataFormatter.formatCellValue(row.getCell(1));
-            int year = Integer.parseInt(yearAsString) % 100;  //년도
-
-            String semester = dataFormatter.formatCellValue(row.getCell(2)); //학기
-
             String courseIdAsString = dataFormatter.formatCellValue(row.getCell(3));
             Long courseId = courseIdToLong(courseIdAsString); //학수번호
 
-            CoursesDomain coursesDomain = coursesDao.findByCourseId(courseId);// 학수번호를 기반으로 Courses 테이블 검색
-            if (coursesDomain == null) {
+            Map<String, Object> cell = new HashMap<>();
+            cell.put(yearKey, Integer.parseInt(dataFormatter.formatCellValue(row.getCell(1))) % 100);
+            cell.put(semesterKey, dataFormatter.formatCellValue(row.getCell(2)));
+            cell.put(courseIdKey, courseId);
+            rowDatas.add(cell);
+            courseIds.add(courseId);
+        }
+
+        Map<Long, CourseDomain> findCourses = coursesDao.findAllById(courseIds)
+                                                        .stream()
+                                                        .collect(Collectors.toMap(CourseDomain::getCourseId, c -> c));
+        List<CompletedCoursesDomain> completedCoursesList = new ArrayList<>();  // 저장할 엔티티 리스트 생성
+        for(Map<String, Object> rowData : rowDatas) {
+            Long courseId = (Long) rowData.get(courseIdKey);
+            CourseDomain courseDomain = findCourses.get(courseId); // DB가 아닌 메모리에서 조회
+            if (courseDomain == null) {
                 continue;
             }
+
             CompletedCoursesDomain data = CompletedCoursesDomain.builder()
                                                                 .userDomain(userDomain)
-                                                                .coursesDomain(coursesDomain)
-                                                                .year(year)
-                                                                .semester(semester)
+                                                                .courseDomain(courseDomain)
+                                                                .year((Integer) rowData.get(yearKey))
+                                                                .semester((String) rowData.get(semesterKey))
                                                                 .build();
             completedCoursesList.add(data);  // 엔티티를 리스트에 추가
         }

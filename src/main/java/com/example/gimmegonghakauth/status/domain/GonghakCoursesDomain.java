@@ -1,7 +1,7 @@
 package com.example.gimmegonghakauth.status.domain;
 
 import com.example.gimmegonghakauth.common.constant.CourseCategory;
-import com.example.gimmegonghakauth.common.domain.CoursesDomain;
+import com.example.gimmegonghakauth.common.domain.CourseDomain;
 import com.example.gimmegonghakauth.common.domain.MajorsDomain;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,7 +39,7 @@ public class GonghakCoursesDomain {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
-    private CoursesDomain coursesDomain;
+    private CourseDomain courseDomain;
 
     @NotNull
     @Range(min = 15, max = 25)

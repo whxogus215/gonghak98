@@ -1,6 +1,6 @@
 package com.example.gimmegonghakauth.completed.domain;
 
-import com.example.gimmegonghakauth.common.domain.CoursesDomain;
+import com.example.gimmegonghakauth.common.domain.CourseDomain;
 import com.example.gimmegonghakauth.user.domain.UserDomain;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,7 +37,7 @@ public class CompletedCoursesDomain {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
-    private CoursesDomain coursesDomain;
+    private CourseDomain courseDomain;
 
     @NotNull
     @Range(min = 17, max = 25)

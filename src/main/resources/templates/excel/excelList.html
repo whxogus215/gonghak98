@@ -31,8 +31,8 @@
           <tr th:each="data : ${datas}">
             <td th:text="${data.year}"></td>
             <td th:text="${data.semester}"></td>
-            <td th:text="${data.coursesDomain.getName()}"></td>
-            <td th:text="${data.coursesDomain.getCourseId()}"></td>
+            <td th:text="${data.courseDomain.getName()}"></td>
+            <td th:text="${data.courseDomain.getCourseId()}"></td>
           </tr>
           </tbody>
         </table>

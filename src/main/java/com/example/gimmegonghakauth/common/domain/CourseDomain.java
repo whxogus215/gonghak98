@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Table(name = "course")
-public class CoursesDomain {
+public class CourseDomain {
 
     @Id
     @Column(name = "course_id")
