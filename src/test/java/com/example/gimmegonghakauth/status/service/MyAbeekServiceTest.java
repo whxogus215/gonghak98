@@ -66,11 +66,11 @@ class MyAbeekServiceTest {
     @DisplayName("전자정보통신공학과 재학생은 인증에 필요한 추천과목을 확인할 수 있다.")
     @ParameterizedTest
     @CsvSource({
-        "9067, 전문교양, 3.0, 문제해결을위한글쓰기와발표",
-        "1357, MSC, 3.0, 미적분학1",
-        "4268, 전공, 3.0, 데이터구조론"
+        "9067, 전문교양, 문제해결을위한글쓰기와발표",
+        "1357, MSC, 미적분학1",
+        "4268, 전공, 데이터구조론"
     })
-    void readRecommendCoursesTest(Long courseId, String abeekName, Double courseCredit, String courseName) {
+    void readRecommendCoursesTest(Long courseId, String abeekName, String courseName) {
         // given
         AbeekTypeConst findAbeekType = AbeekTypeConst.getCourseCategoryType(abeekName);
         UserDomain user = createTestUserWithSingleCompletedCourse(courseId);
@@ -89,11 +89,16 @@ class MyAbeekServiceTest {
         int year = 25;
         String semester = "1학기";
         Long studentId = 25010693L;
+        Long eicMajorId = 1L;
         String password = "testPassword";
         String email = "test@university.ac.kr";
         String name = "김공학";
 
-        MajorsDomain major = majorsDao.findById(1L).orElse(new MajorsDomain());
+        MajorsDomain major = majorsDao.findById(eicMajorId)
+                                      .orElseGet(() -> {
+                                          MajorsDomain newMajor = new MajorsDomain(eicMajorId, "전자정보통신공학과");
+                                          return majorsDao.save(newMajor);
+                                      });
         UserDomain user = userService.create(String.valueOf(studentId), password, email, major, name);
         CoursesDomain course = coursesDao.findByCourseId(courseId);
 
