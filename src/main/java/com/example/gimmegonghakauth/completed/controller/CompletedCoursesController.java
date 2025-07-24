@@ -30,28 +30,21 @@ public class CompletedCoursesController {
     public String excel(Model model, Authentication authentication){
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         List<CompletedCoursesDomain> dataList = excelService.getExcelList(userDetails);
-        model.addAttribute("datas",dataList);
+
+        model.addAttribute("datas", dataList);
         return "excel/excelList";
     }
 
     @PostMapping("/excel/read")
     public String readExcel(@RequestParam("file") MultipartFile file, Model model, Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        log.info("===========================이미 등록된 기이수 파일 조회 <<<시작>>>");
         List<CompletedCoursesDomain> beforeDataList = excelService.getExcelList(userDetails);
-        log.info("===========================이미 등록된 기이수 파일 조회 <<<종료>>>");
-        model.addAttribute("datas",beforeDataList);
+        model.addAttribute("datas", beforeDataList);
 
         try {
-            log.info("===========================새 기이수 파일 추출 후, 저장 <<<시작>>>");
             excelService.extractExcelFile(file, userDetails);
-            log.info("===========================새 기이수 파일 추출 후, 저장 <<<종료>>>");
-
-            log.info("===========================새로 등록한 기이수 파일 조회 <<<시작>>>");
             List<CompletedCoursesDomain> afterDataList = excelService.getExcelList(userDetails);
-            log.info("===========================새로 등록한 기이수 파일 조회 <<<종료>>>");
-            
-            model.addAttribute("datas",afterDataList);
+            model.addAttribute("datas", afterDataList);
             return "excel/excelList";
         } catch (IOException | FileException e) {
             model.addAttribute("error", e.getMessage());
