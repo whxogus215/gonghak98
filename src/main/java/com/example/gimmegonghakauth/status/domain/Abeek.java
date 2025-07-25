@@ -1,76 +1,54 @@
-package com.example.gimmegonghakauth.status.service;
+package com.example.gimmegonghakauth.status.domain;
 
 import com.example.gimmegonghakauth.common.constant.AbeekTypeConst;
-import com.example.gimmegonghakauth.status.infrastructure.GonghakRepository;
 import com.example.gimmegonghakauth.status.service.dto.AbeekDetailsDto;
 import com.example.gimmegonghakauth.status.service.dto.CourseDetailsDto;
 import com.example.gimmegonghakauth.status.service.dto.GonghakResultDto;
 import com.example.gimmegonghakauth.status.service.dto.GonghakStandardDto;
 import com.example.gimmegonghakauth.status.service.dto.ResultPointDto;
-import com.example.gimmegonghakauth.user.domain.UserDomain;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Service
-@RequiredArgsConstructor
-public class GonghakCalculateService {
+public class Abeek {
 
-    private final GonghakRepository gonghakRepository;
+    private final Map<AbeekTypeConst, Integer> standards;
 
-    @Transactional(readOnly = true)
-    public Optional<GonghakResultDto> getResult(UserDomain userDomain) {
+    public Abeek(GonghakStandardDto gonghakStandardDto) {
+        this.standards = gonghakStandardDto.getStandards();
+    }
 
-        // findStandard -> 학번 입학년도를 기준으로 해당 년도의 abeekType(영역별 구분),minCredit(영역별 인증학점) 불러온다.
-        Optional<GonghakStandardDto> standard = gonghakRepository.findStandard(
-            userDomain.getMajorsDomain());
-
+    public Optional<GonghakResultDto> getResult(List<CourseDetailsDto> userCompletedCourses) {
         // default user abeek 학점 상태 map
-        Map<AbeekTypeConst, AbeekDetailsDto> userResult = getUserAbeekCreditDefault(
-            standard.get().getStandards());
+        Map<AbeekTypeConst, AbeekDetailsDto> userResult = getUserAbeekCreditDefault(standards);
 
-        // user 공학 상태 테이블
-        // gonghakCourse 중 이수한 과목을 불러온다.
-        List<CourseDetailsDto> userCompletedCourses = gonghakRepository.findUserCompletedCourses(
-            userDomain.getStudentId(), userDomain.getMajorsDomain());
-
-        // user
         // stackUserGonghakCredit -> abeekType에 맞게 이수한 총 학점을 계산한다.
-        stackUserGonghakCredit(userCompletedCourses,
-            userResult);
+        stackUserGonghakCredit(userCompletedCourses, userResult);
 
         // 인증 상태(비율) return
         return Optional.of(new GonghakResultDto(userResult));
     }
 
-
-    // default user abeek 학점 상태 map을 만들어 반환한다.
-    private Map<AbeekTypeConst, AbeekDetailsDto> getUserAbeekCreditDefault(
-        Map<AbeekTypeConst, Integer> standards) {
+    private Map<AbeekTypeConst, AbeekDetailsDto> getUserAbeekCreditDefault(Map<AbeekTypeConst, Integer> standards) {
         Map<AbeekTypeConst, AbeekDetailsDto> userAbeekCredit = new ConcurrentHashMap<>();
         Arrays.stream(AbeekTypeConst.values()).forEach(abeekTypeConst -> {
             if (standards.containsKey(abeekTypeConst)) {
                 ResultPointDto resultPoint = new ResultPointDto(0.0, standards.get(abeekTypeConst));
-                AbeekDetailsDto abeekDetailsDto = new AbeekDetailsDto(resultPoint,
-                    new ArrayList<>());
+                AbeekDetailsDto abeekDetailsDto = new AbeekDetailsDto(resultPoint, new ArrayList<>());
                 userAbeekCredit.put(abeekTypeConst, abeekDetailsDto);
             }
         });
         return userAbeekCredit;
     }
 
-
     // abeekType에 맞게 이수한 총 학점을 계산한다.
     private void stackUserGonghakCredit(List<CourseDetailsDto> userCoursesByMajor,
         Map<AbeekTypeConst, AbeekDetailsDto> userResult) {
         userCoursesByMajor.forEach(courseDetailsDto -> {
-            AbeekTypeConst typeConst = getCourseCategoryType(
+            AbeekTypeConst typeConst = AbeekTypeConst.getCourseCategoryType(
                 String.valueOf(courseDetailsDto.getCourseCategory()));
             if (typeConst != null) {
                 stackCredit(typeConst, courseDetailsDto, userResult);
@@ -82,22 +60,6 @@ public class GonghakCalculateService {
             addCourseToDetails(AbeekTypeConst.MINIMUM_CERTI, courseDetailsDto, userResult);
         });
     }
-
-    private AbeekTypeConst getCourseCategoryType(String courseCategory) {
-        switch (courseCategory) {
-            case "전공":
-                return AbeekTypeConst.MAJOR;
-            case "전문교양":
-                return AbeekTypeConst.PROFESSIONAL_NON_MAJOR;
-            case "MSC":
-                return AbeekTypeConst.MSC;
-            case "BSM":
-                return AbeekTypeConst.BSM;
-            default:
-                return null;
-        }
-    }
-
 
     private void stackCredit(AbeekTypeConst abeekTypeConst, CourseDetailsDto courseDetailsDto,
         Map<AbeekTypeConst, AbeekDetailsDto> userResult) {
@@ -118,15 +80,12 @@ public class GonghakCalculateService {
         }
     }
 
-
-    private double getInputCredit(AbeekTypeConst abeekTypeConst,
-        CourseDetailsDto courseDetailsDto) {
+    private double getInputCredit(AbeekTypeConst abeekTypeConst, CourseDetailsDto courseDetailsDto) {
         return (abeekTypeConst == AbeekTypeConst.DESIGN) ? courseDetailsDto.getDesignCredit()
             : (double) courseDetailsDto.getCredit();
     }
 
-    private void addCourseToDetails(AbeekTypeConst abeekTypeConst,
-        CourseDetailsDto courseDetailsDto,
+    private void addCourseToDetails(AbeekTypeConst abeekTypeConst, CourseDetailsDto courseDetailsDto,
         Map<AbeekTypeConst, AbeekDetailsDto> userAbeekCredit) {
         if (getInputCredit(abeekTypeConst, courseDetailsDto) == 0) {
             return;
@@ -143,6 +102,4 @@ public class GonghakCalculateService {
             updatedCourses.add(courseDetailsDto);
         }
     }
-
-
 }

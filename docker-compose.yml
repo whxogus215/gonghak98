@@ -2,43 +2,120 @@ version: "3.8"
 
 services:
   db:
-    image: mysql:8.4.0
-    volumes:
-      - ./mysql/init:/docker-entrypoint-initdb.d
+    image: mysql:8.0
+    container_name: db
+    ports:
+      - "3306:3306"
     environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - LANG=${LANG}
+      - MYSQL_ROOT_PASSWORD=1234
+      - MYSQL_DATABASE=gonghak98
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "--password=1234" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s  # 컨테이너 시작 후 30초 동안은 실패를 무시
     restart: always
+    deploy: # 서버 스펙은 RDS 프리티어 db.t3.micro를 기준으로 설정
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
     networks:
-      - ${NETWORK_NAME}
+      - gonghak98
   was:
+    container_name: was
     build:
       context: .
-      dockerfile: docker/Dockerfile_Was
-#    image: boylonglegs/gonghak-was:local
+      dockerfile: docker/Dockerfile_Was_Performance
+    ports:
+      - "8080:8080"
     environment:
-      - DB_URL=${DB_NAME}
-      - DB_PORT=${DB_PORT}
-      - DB_NAME=${SCHEMA_NAME}
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/gonghak98?serverTimezone=UTC&rewriteBatchedStatements=true
     depends_on:
-      - ${DB_NAME} # db 컨테이너가 실행된 후, was가 실행됨
+      db:
+        condition: service_healthy  # MySQL의 health check가 성공할 때까지 대기
+    deploy: # 서버 스펙은 AWS 프리티어 t2.micro를 기준으로 설정
+      resources:
+        limits:
+          cpus: '1'    # CPU 1코어로 제한
+          memory: 1G   # 전체 메모리 1GB로 제한
     networks:
-      - ${NETWORK_NAME}
+      - gonghak98
   nginx:
+    container_name: nginx
     build: # 도커파일을 통해 이미지를 빌드할 때, 사용
       context: . # 도커 빌드 컨텍스트는 루트 경로로 지정
       dockerfile: docker/Dockerfile_Nginx
 #    image: gonghak-proxy:local
     environment:
-      - WAS_HOST=${WAS_NAME}
+      - WAS_HOST=was
     ports:
       - 80:80
     depends_on:
-      - ${WAS_NAME} # was 컨테이너가 실행된 후, nginx가 실행됨
+      - was # was 컨테이너가 실행된 후, nginx가 실행됨
     networks:
-      - ${NETWORK_NAME}
+      - gonghak98
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - gonghak98
+    depends_on:
+      - mysqld_exporter
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - gonghak98
+    depends_on:
+      - prometheus
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+  # MySQL 모니터링을 위한 Prometheus Exporter
+  mysqld_exporter:
+    image: prom/mysqld-exporter:latest
+    container_name: mysqld_exporter
+    environment:
+      - DATA_SOURCE_NAME=root:1234@tcp(db:3306)/
+    ports:
+      - "9104:9104"
+    depends_on:
+      db:
+        condition: service_healthy  # MySQL의 health check가 성공할 때까지 대기
+    deploy:
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: 64M
+    command:
+      - "--mysqld.username=root:1234"
+      - "--mysqld.address=db:3306"
+    networks:
+      - gonghak98
+
+volumes:
+  grafana_data:
 
 networks:
-  gonghak:
+  gonghak98:
     driver: bridge

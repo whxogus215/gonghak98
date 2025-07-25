@@ -28,7 +28,6 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 
-*.csv
 *.env
 
 ### NetBeans ###
@@ -45,3 +44,4 @@ out/
 ### Ignore Files for Deploy ###
 scripts
 
+*.properties

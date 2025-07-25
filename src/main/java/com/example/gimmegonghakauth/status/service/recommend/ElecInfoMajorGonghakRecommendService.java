@@ -1,7 +1,11 @@
 package com.example.gimmegonghakauth.status.service.recommend;
 
+import static com.example.gimmegonghakauth.common.constant.CourseCategory.MSC;
+import static com.example.gimmegonghakauth.common.constant.CourseCategory.전공;
+import static com.example.gimmegonghakauth.common.constant.CourseCategory.전문교양;
+
 import com.example.gimmegonghakauth.common.constant.AbeekTypeConst;
-import com.example.gimmegonghakauth.common.constant.CourseCategoryConst;
+import com.example.gimmegonghakauth.common.constant.CourseCategory;
 import com.example.gimmegonghakauth.status.infrastructure.GonghakRepository;
 import com.example.gimmegonghakauth.status.service.dto.GonghakRecommendCoursesDto;
 import com.example.gimmegonghakauth.status.service.dto.GonghakStandardDto;
@@ -9,9 +13,9 @@ import com.example.gimmegonghakauth.status.service.dto.IncompletedCoursesDto;
 import com.example.gimmegonghakauth.user.domain.UserDomain;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,74 +28,49 @@ public class ElecInfoMajorGonghakRecommendService implements GonghakRecommendSer
 
     @Transactional(readOnly = true)
     @Override
-    public GonghakRecommendCoursesDto createRecommendCourses(UserDomain userDomain) {
-        GonghakRecommendCoursesDto gonghakRecommendCoursesDto = new GonghakRecommendCoursesDto();
+    public GonghakRecommendCoursesDto createRecommendCourses(UserDomain user, GonghakStandardDto standard) {
+        List<CourseCategory> courseCategories = Arrays.asList(전문교양, 전공, MSC);
+        List<IncompletedCoursesDto> userIncompletedCourses = gonghakRepository.findUserIncompletedCourses(courseCategories,
+                                                                                                          user.getStudentId(),
+                                                                                                          user.getMajorsDomain());
 
-        // findStandard -> 학번 입학년도를 기준으로 해당 년도의 abeekType(영역별 구분),minCredit(영역별 인증학점) 불러온다.
-        Optional<GonghakStandardDto> standard = gonghakRepository.findStandard(userDomain.getMajorsDomain());
-
-        // 수강하지 않은 과목 중 "전문 교양" 과목을 반환한다.
-        List<IncompletedCoursesDto> professionalNonMajor = gonghakRepository.findUserIncompletedCourses(
-                CourseCategoryConst.전문교양, userDomain.getStudentId(), userDomain.getMajorsDomain()
+        Map<AbeekTypeConst, List<IncompletedCoursesDto>> recommendCourses = new EnumMap<>(AbeekTypeConst.class);
+        standard.getStandards().keySet().forEach(
+            abeekType -> recommendCourses.put(abeekType, new ArrayList<>())
         );
 
-        // 수강하지 않은 과목 중 "전공" 과목을 반환한다.
-        List<IncompletedCoursesDto> major = gonghakRepository.findUserIncompletedCourses(
-                CourseCategoryConst.전공, userDomain.getStudentId(), userDomain.getMajorsDomain()
-        );
+        List<IncompletedCoursesDto> professionalNonMajor = userIncompletedCourses.stream()
+                                                                                 .filter(course -> course.getCourseCategory() == 전문교양)
+                                                                                 .toList();
+        List<IncompletedCoursesDto> major = userIncompletedCourses.stream()
+                                                                  .filter(course -> course.getCourseCategory() == 전공)
+                                                                  .toList();
+        List<IncompletedCoursesDto> msc = userIncompletedCourses.stream()
+                                                                .filter(course -> course.getCourseCategory() == MSC)
+                                                                .toList();
 
-        // 수강하지 않은 과목 중 "MSC" 과목을 반환한다.
-        List<IncompletedCoursesDto> msc = gonghakRepository.findUserIncompletedCourses(
-                CourseCategoryConst.MSC, userDomain.getStudentId(), userDomain.getMajorsDomain()
-        );
-
-        // abeekType 별 추천 과목 List를 반환한다.
-        Map<AbeekTypeConst, List<IncompletedCoursesDto>> coursesByAbeekTypeWithoutCompleteCourses = gonghakRecommendCoursesDto.getRecommendCoursesByAbeekType();
-        Arrays.stream(AbeekTypeConst.values()).forEach(
-                abeekType -> {
-                    List<IncompletedCoursesDto> abeekRecommend = new ArrayList<>();
-                    if (standard.get().getStandards().containsKey(abeekType)) {
-                        switch (abeekType) {
-                            case MSC:
-                                abeekRecommend.addAll(msc);
-                                break;
-                            case MAJOR:
-                                abeekRecommend.addAll(major);
-                                break;
-                            case DESIGN:
-                                addOnlyDesignCreditOverZero(major, abeekRecommend);
-                                break;
-                            case PROFESSIONAL_NON_MAJOR:
-                                abeekRecommend.addAll(professionalNonMajor);
-                                break;
-                            case NON_MAJOR:
-                                abeekRecommend.addAll(professionalNonMajor);
-                                break;
-                            case MINIMUM_CERTI:
-                                abeekRecommend.addAll(msc);
-                                abeekRecommend.addAll(major);
-                                abeekRecommend.addAll(professionalNonMajor);
-                                break;
-                        }
-                        coursesByAbeekTypeWithoutCompleteCourses.put(abeekType, abeekRecommend);
+        standard.getStandards().keySet().forEach(
+            abeekType -> {
+                switch (abeekType) {
+                    case MSC -> recommendCourses.get(abeekType).addAll(msc);
+                    case MAJOR -> recommendCourses.get(abeekType).addAll(major);
+                    case PROFESSIONAL_NON_MAJOR, NON_MAJOR -> recommendCourses.get(abeekType).addAll(professionalNonMajor);
+                    case MINIMUM_CERTI -> {
+                        recommendCourses.get(abeekType).addAll(msc);
+                        recommendCourses.get(abeekType).addAll(major);
+                        recommendCourses.get(abeekType).addAll(professionalNonMajor);
                     }
-
-                }
-        );
-
-        return gonghakRecommendCoursesDto;
-    }
-
-    // 설계 과목(designCredit > 0)인 경우만 추가한다.
-    private static void addOnlyDesignCreditOverZero(List<IncompletedCoursesDto> majorBasic,
-                                                    List<IncompletedCoursesDto> abeekRecommend) {
-        majorBasic.forEach(
-                incompletedCoursesDto -> {
-                    if (incompletedCoursesDto.getDesignCredit() > 0) {
-                        abeekRecommend.add(incompletedCoursesDto);
+                    case DESIGN -> {
+                        List<IncompletedCoursesDto> incompletedCourses = recommendCourses.get(abeekType);
+                        major.stream()
+                             .filter(course -> course.getDesignCredit() > 0)
+                             .forEach(incompletedCourses::add);
                     }
+                    default -> throw new IllegalStateException("올바르지 않은 타입 : " + abeekType);
                 }
+            }
         );
-    }
 
+        return new GonghakRecommendCoursesDto(recommendCourses);
+    }
 }
