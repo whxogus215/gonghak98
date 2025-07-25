@@ -30,6 +30,21 @@
 |자신이 이수한 과목의 리스트를 확인할 수 있습니다.|공학인증 요건과 자신의 현재 인증 상태를 확인할 수 있습니다.|
 |<img src="https://github.com/gmltn9233/Gimme-Gonghak-Auth/assets/63588364/c435620a-f21c-4319-945a-16144a98e885">|<img src="https://github.com/gmltn9233/Gimme-Gonghak-Auth/assets/63588364/2bb79f66-2545-4a7e-b61c-f15afc625d9e">|
 
+## 🛠 기술 스택
+
+| 구분 | 내용                                                                                       |
+|---|------------------------------------------------------------------------------------------|
+| 언어 & 프레임워크 | Java 17, Spring Boot, Spring Data Jpa                                                    |
+| 테스트 | Junit5                                                                                   |
+| DB | MySQL, H2                                                                                |
+| 인프라 | NginX, Docker, AWS, Github Actions                                                       |
+| 화면 | Html, Css, JavaScript, Thymeleaf                                                         |
+| 외부 API & 라이브러리 | [UnivCert](https://github.com/in-seo/univcert), [98.css](https://jdan.github.io/98.css/) |
+
+
+## 💻인프라
+
+<img width="4676" height="3308" alt="인프라 아키텍처" src="https://github.com/user-attachments/assets/31ea679f-079f-40c5-b0e4-1a8b51ab3afd" />
 
 ## 🙋🏻‍♀️ 팀원 소개
 
@@ -65,18 +80,9 @@
             </td>
         </tr>
         <tr>
-            <td align="center">&middot; 배포 자동화 <br>&middot;  AWS 인프라 구축</td>
+            <td align="center">&middot; 코드 리팩토링 및 성능 최적화 <br>&middot; AWS 인프라 구축<br>&middot; 배포 자동화</td>
             <td align="center">&middot; 로그인/회원가입 <br>&middot; 데이터 업로드<br>&middot; UI 구현 </td>
             <td align="center">&middot; 메인 로직 구현 <br>&middot; 데이터 수집, 정제</td>
         </tr>
     </tbody>
 </table>
-
-
-## 🛠 기술 스택
-
-![image](https://github.com/gmltn9233/Gimme-Gonghak-Auth/assets/63588364/24f6abdc-6515-43cf-bc65-3046e960bfe5)
-
-
-## 💻인프라
-![image](https://github.com/Sejong-Java-Study/Gimme-Gonghak-Auth/assets/63588364/cd0888eb-64e4-4d95-98b6-9e4464548300)
